@@ -40,6 +40,7 @@ dependencies:
   draw_graph: ^0.0.2
   camera: any
   video_player: ^2.1.4
+  chewie: ^1.2.0
 
 
 

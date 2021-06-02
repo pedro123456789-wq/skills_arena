@@ -5,6 +5,9 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
+
+//TODO: Add Video timer
+
 class RecordVideo extends StatefulWidget {
   @override
   _RecordVideoState createState() => _RecordVideoState();
@@ -212,6 +215,14 @@ class _RecordVideoState extends State<RecordVideo>
                       : ElevatedButton(
                           onPressed: () async {
                             await stopVideoRecording();
+                            GlobalFunctions.navigate(
+                              context,
+                              VideoPreview(
+                                await GlobalFunctions.getTempPath(
+                                  'skill_recording.mp4',
+                                ),
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             primary: Colors.black,
@@ -224,33 +235,15 @@ class _RecordVideoState extends State<RecordVideo>
                         ),
                   ElevatedButton(
                     onPressed: () async {
-                      await _onCameraSwitch();
+                      if (!isRecording) {
+                        await _onCameraSwitch();
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Colors.black,
                     ),
                     child: Icon(
                       Icons.switch_camera,
-                      color: Colors.greenAccent,
-                      size: DeviceInfo.deviceWidth(context) * 0.15,
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      GlobalFunctions.navigate(
-                        context,
-                        VideoPreview(
-                          await GlobalFunctions.getTempPath(
-                            'skill_recording.mp4',
-                          ),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.black,
-                    ),
-                    child: Icon(
-                      Icons.preview,
                       color: Colors.greenAccent,
                       size: DeviceInfo.deviceWidth(context) * 0.15,
                     ),

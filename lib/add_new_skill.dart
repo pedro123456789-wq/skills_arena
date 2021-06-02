@@ -5,6 +5,10 @@ import './record_video.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
+//TODO: Save video and skill name to database
+
+
 class AddNewSkill extends StatefulWidget {
   @override
   _AddNewSkillState createState() => _AddNewSkillState();
