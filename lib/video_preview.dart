@@ -8,7 +8,6 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'dart:io';
 
-//TODO: Display video with video player package
 
 class VideoPreview extends StatefulWidget {
   final String videoPath;
