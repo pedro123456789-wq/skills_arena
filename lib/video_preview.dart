@@ -8,7 +8,6 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'dart:io';
 
-
 class VideoPreview extends StatefulWidget {
   final String videoPath;
 
@@ -129,7 +128,9 @@ class _VideoPreviewState extends State<VideoPreview> {
                     onPressed: () {
                       GlobalFunctions.navigate(
                         context,
-                        AddNewSkill(),
+                        AddNewSkill(
+                          isVideoSelected: true,
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(

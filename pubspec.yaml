@@ -30,7 +30,7 @@ dependencies:
   path_provider: ^2.0.1
   circular_countdown_timer: ^0.2.0
   http: ^0.13.0
-  audioplayers: ^0.18.3
+  audioplayers: any
   record_mp3: ^2.1.0
   permission_handler: ^8.0.0+2
   flutter_map: any
@@ -41,6 +41,8 @@ dependencies:
   camera: any
   video_player: ^2.1.4
   chewie: ^1.2.0
+  image_picker: ^0.8.0
+  media_info: ^0.7.0
 
 
 

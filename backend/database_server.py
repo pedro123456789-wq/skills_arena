@@ -306,9 +306,11 @@ def upload_video():
 		password = headers['password']
 		skill_name = headers['skill_name']
 		video_file = flask.request.files['video']
-	except:
+	except Exception as e:
+		print(e)
 		return ('Missing Required Headers', 404, [['Content-Type', 'text/html']])
 
+	print(video_file)
 	if isAuthenticated(username, password):
 		video_file.seek(0, 2)
 		file_size = video_file.tell()
