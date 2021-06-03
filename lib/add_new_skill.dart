@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
-
 class AddNewSkill extends StatefulWidget {
   bool isVideoSelected;
 
@@ -26,14 +25,14 @@ class _AddNewSkillState extends State<AddNewSkill> {
   ImagePicker picker = new ImagePicker();
   File selectedFile;
   bool isError = false;
+  VideoPlayerController controller;
 
   Future<void> getVideo() async {
     selectedFile = File(
       (await picker.getVideo(source: ImageSource.gallery)).path,
     );
 
-    VideoPlayerController controller =
-        new VideoPlayerController.file(selectedFile);
+    controller = new VideoPlayerController.file(selectedFile);
     await controller.initialize();
 
     print(controller.value.duration.inSeconds);
@@ -46,10 +45,18 @@ class _AddNewSkillState extends State<AddNewSkill> {
         },
       );
     } else {
-      setState(() {
-        isError = true;
-      });
+      setState(
+        () {
+          isError = true;
+        },
+      );
     }
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    controller.dispose();
   }
 
   @override

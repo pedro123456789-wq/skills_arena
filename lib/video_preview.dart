@@ -44,6 +44,14 @@ class _VideoPreviewState extends State<VideoPreview> {
   }
 
   @override
+  void dispose(){
+    super.dispose();
+    controller.dispose();
+    chewieController.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
