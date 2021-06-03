@@ -12,7 +12,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
 
-
 class AddNewSkill extends StatefulWidget {
   bool isVideoSelected;
 
