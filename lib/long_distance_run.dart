@@ -213,20 +213,6 @@ class _LongDistanceRunState extends State<LongDistanceRun> {
               ),
             ),
             Positioned(
-              top: DeviceInfo.deviceHeight(context) * 0.08,
-              left: 0,
-              right: 0,
-              child: Text(
-                distanceIncrement.toString(),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.07,
-                  fontFamily: 'PermanentMarker',
-                ),
-              ),
-            ),
-            Positioned(
               top: DeviceInfo.deviceHeight(context) * 0.15,
               left: 0,
               right: 0,
