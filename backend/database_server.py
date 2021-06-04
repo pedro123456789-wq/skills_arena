@@ -298,6 +298,32 @@ def get_distances():
 		return ('Invalid Credentials', 404, [['Content-Type', 'text/html']])
 
 
+
+#check if user has less than four skills saved
+
+@app.route('/is-skill-name-valid', methods = ['POST'])
+def is_skill_name_valid():
+	try:
+		headers = flask.request.headers
+		username = headers['username']
+		password = headers['password']
+		skill_name = headers['skill_name']
+	except:
+		return ('Missing required headers', 404, [['Content-Type', 'text/html']])
+
+
+	if isAuthenticated(username, password):
+		user = User.query.filter_by(username = username).all()[0]
+		matching_name_skills = Skill.query.filter_by(user_id = user.id, name = skill_name).all()
+
+		if len(matching_name_skills) > 0:
+			return ('Inavalid Name', 404, [['Content-Type', 'text/html']])
+		else:
+			return ('Valid Name', 200, [['Content-Type', 'text/html']])
+	else:
+		return ('Invalid Credentials', 404, [['Content-Type', 'text/html']])
+
+
 @app.route('/upload-video', methods = ['POST'])
 def upload_video():
 	try:
@@ -318,7 +344,7 @@ def upload_video():
 
 		print(file_size)
 		
-		if file_size < 25000000:
+		if file_size < 4500000:
 			output_path = f'skill_videos/{username}'
 
 			if (not os.path.exists(output_path)):

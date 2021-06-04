@@ -39,7 +39,7 @@ dependencies:
   flutter_spinbox: ^0.5.2
   draw_graph: ^0.0.2
   camera: any
-  video_player: ^2.1.4
+  video_player: ^2.1.5
   chewie: ^1.2.0
   image_picker: ^0.8.0
   media_info: ^0.7.0

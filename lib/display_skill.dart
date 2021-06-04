@@ -45,32 +45,12 @@ class _DisplaySkillState extends State<DisplaySkill> {
       response.bodyBytes,
     );
 
-    if (controller != null) {
-      final oldController = controller;
-      oldController.dispose();
-    }
-
-    controller = VideoPlayerController.file(
-      outputFile,
-    )..initialize().then(
-        (_) {
-          setState(
-            () {},
-          );
-        },
-      );
-
     chewieController = ChewieController(
-      videoPlayerController: controller,
-      aspectRatio: controller.value.aspectRatio,
+      videoPlayerController: VideoPlayerController.file(outputFile),
+      autoInitialize: true,
+      aspectRatio: 3 / 2,
       autoPlay: false,
       looping: false,
-    );
-
-    setState(
-      () {
-        controller = null;
-      },
     );
 
     return chewieController;
@@ -84,10 +64,9 @@ class _DisplaySkillState extends State<DisplaySkill> {
 
   @override
   void dispose() {
-    super.dispose();
-    controller = null;
-    controller.dispose();
+    chewieController.videoPlayerController.dispose();
     chewieController.dispose();
+    super.dispose();
   }
 
   @override

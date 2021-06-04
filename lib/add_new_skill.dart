@@ -11,6 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
+
+//TODO: Check if user has less than 5 skills saved
+//TODO: Add option to delete skill
+
+
 class AddNewSkill extends StatefulWidget {
   bool isVideoSelected;
 
@@ -25,6 +30,7 @@ class _AddNewSkillState extends State<AddNewSkill> {
   ImagePicker picker = new ImagePicker();
   File selectedFile;
   bool isError = false;
+  String errorMessage = 'The video is too long or too large or has an invalid format';
   VideoPlayerController controller;
 
   Future<void> getVideo() async {
@@ -54,7 +60,7 @@ class _AddNewSkillState extends State<AddNewSkill> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     controller.dispose();
   }
@@ -171,7 +177,7 @@ class _AddNewSkillState extends State<AddNewSkill> {
                 ],
               ),
             ),
-            if (widget.isVideoSelected)
+            if (widget.isVideoSelected && !isError)
               Positioned(
                 top: DeviceInfo.deviceHeight(context) * 0.75,
                 left: 0,
@@ -192,7 +198,7 @@ class _AddNewSkillState extends State<AddNewSkill> {
                 left: 0,
                 right: 0,
                 child: Text(
-                  'File format is invalid or video is too long',
+                  errorMessage,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.redAccent,
@@ -207,8 +213,28 @@ class _AddNewSkillState extends State<AddNewSkill> {
               right: 0,
               child: ElevatedButton(
                 onPressed: () async {
+                  String skillName = skillNameController.text;
+
                   if (widget.isVideoSelected) {
-                    String skillName = skillNameController.text;
+                    Response isNameValid = await RequestHandler.sendPost(
+                      {
+                        'username': (await GlobalFunctions.getCredentials())[0],
+                        'password': (await GlobalFunctions.getCredentials())[1],
+                        'skill_name': skillName
+                      },
+                      'http://192.168.1.142:8090/is-skill-name-valid',
+                    );
+
+                    if (isNameValid.statusCode == 404) {
+                      setState(
+                        () {
+                          isError = true;
+                          errorMessage = 'Skill name is already in use';
+                        },
+                      );
+
+                      return;
+                    }
 
                     if (skillName.length > 0) {
                       MultipartRequest request = MultipartRequest(
