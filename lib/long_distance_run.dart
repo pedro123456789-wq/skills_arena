@@ -53,7 +53,9 @@ class LongDistanceRun extends StatefulWidget {
 }
 
 class _LongDistanceRunState extends State<LongDistanceRun> {
+  Timer locationTimer;
   Position previousPosition;
+  double distanceIncrement;
   bool run = true;
   double distanceCovered = 0;
   String elapsedString = '00 : 00';
@@ -61,7 +63,7 @@ class _LongDistanceRunState extends State<LongDistanceRun> {
   StreamSubscription<int> timerSubscription;
   Timer timer;
   String averagePace = '-';
-  int currentKilometre = 0;
+  int currentKilometre = 1;
 
   int getSeconds(String elapsedString) {
     int minutes = int.parse(elapsedString.split(':')[0]);
@@ -102,36 +104,44 @@ class _LongDistanceRunState extends State<LongDistanceRun> {
   }
 
   void getAveragePace(int secondsTaken, double distance) {
-    int secondsPerKm = (secondsTaken.toDouble() / distance).round();
+    if (distance > 0) {
+      int secondsPerKm = (secondsTaken.toDouble() / distance).round();
 
-    int minutes = secondsPerKm ~/ 60;
-    int seconds = secondsPerKm - (minutes * 60);
+      int minutes = secondsPerKm ~/ 60;
+      int seconds = secondsPerKm - (minutes * 60);
 
-    averagePace = '$minutes : $seconds / KM';
+      averagePace = '$minutes : $seconds / KM';
+    }
   }
 
   void trackLocations() async {
-    while (run) {
+    if (run) {
       Position currentPosition = await getCurrentPosition();
 
-      print('${currentPosition.longitude} ${currentPosition.latitude}');
-
       if (previousPosition != null) {
+        print('${currentPosition.longitude} ${currentPosition.latitude}');
         print('${previousPosition.longitude} ${previousPosition.latitude}');
 
         if (this.mounted) {
           setState(
             () {
-              distanceCovered += Geolocator.distanceBetween(
+              distanceIncrement = Geolocator.distanceBetween(
                 previousPosition.latitude,
                 previousPosition.longitude,
                 currentPosition.latitude,
                 currentPosition.longitude,
               );
 
-              if (distanceCovered.round() > currentKilometre) {
+              print(distanceIncrement);
+
+              if (distanceIncrement >= 50) {
+                previousPosition = currentPosition;
+                distanceCovered += distanceIncrement / 1000;
+              }
+
+              if (distanceCovered > currentKilometre) {
                 GlobalFunctions.textToSpeech(
-                  'Time: $elapsedString, Distance: ${currentKilometre + 1}, Average Pace: $averagePace',
+                  'Time: $elapsedString, Distance: $currentKilometre kilometers, Average Pace: $averagePace',
                 );
                 currentKilometre++;
               }
@@ -139,15 +149,22 @@ class _LongDistanceRunState extends State<LongDistanceRun> {
             },
           );
         }
+      } else {
+        previousPosition = currentPosition;
       }
-
-      previousPosition = currentPosition;
     }
   }
 
   @override
   void initState() {
     super.initState();
+
+    locationTimer = Timer.periodic(
+      Duration(seconds: 5),
+      (timer) {
+        trackLocations();
+      },
+    );
 
     timerStream = stopWatchStream();
     timerSubscription = timerStream.listen(
@@ -168,6 +185,7 @@ class _LongDistanceRunState extends State<LongDistanceRun> {
   @override
   void dispose() {
     run = false;
+    locationTimer?.cancel();
     timer?.cancel();
     timerSubscription.cancel();
     super.dispose();
@@ -175,7 +193,6 @@ class _LongDistanceRunState extends State<LongDistanceRun> {
 
   @override
   Widget build(BuildContext context) {
-    trackLocations();
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -191,6 +208,20 @@ class _LongDistanceRunState extends State<LongDistanceRun> {
                 style: TextStyle(
                   color: Colors.greenAccent,
                   fontSize: DeviceInfo.deviceWidth(context) * 0.1,
+                  fontFamily: 'PermanentMarker',
+                ),
+              ),
+            ),
+            Positioned(
+              top: DeviceInfo.deviceHeight(context) * 0.08,
+              left: 0,
+              right: 0,
+              child: Text(
+                distanceIncrement.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontSize: DeviceInfo.deviceWidth(context) * 0.07,
                   fontFamily: 'PermanentMarker',
                 ),
               ),
@@ -320,7 +351,6 @@ class _LongDistanceRunState extends State<LongDistanceRun> {
                             GlobalFunctions.textToSpeech('Resuming Run');
                             timerSubscription.resume();
                             run = true;
-                            trackLocations();
                             setState(
                               () {
                                 AppGlobals.isSessionPaused = false;

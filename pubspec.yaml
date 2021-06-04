@@ -35,7 +35,7 @@ dependencies:
   permission_handler: ^8.0.0+2
   flutter_map: any
   latlong2: ^0.8.0
-  geolocator: ^7.0.3
+  location: 4.1.1
   flutter_spinbox: ^0.5.2
   draw_graph: ^0.0.2
   camera: any
@@ -43,6 +43,9 @@ dependencies:
   chewie: ^1.2.0
   image_picker: ^0.8.0
   media_info: ^0.7.0
+  geolocator: ^7.0.3
+  huawei_location: ^5.1.0+301
+
 
 
 

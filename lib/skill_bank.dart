@@ -78,52 +78,50 @@ class SkillBank extends StatelessWidget {
                 ),
               ),
             ),
-            Positioned(
-              child: FutureBuilder(
-                future: getSkills(context),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    return Positioned(
-                      top: DeviceInfo.deviceHeight(context) * 0.15,
-                      left: 0,
-                      right: 0,
-                      bottom: DeviceInfo.deviceHeight(context) * 0.1,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: snapshot.data,
+            FutureBuilder(
+              future: getSkills(context),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return Positioned(
+                    top: DeviceInfo.deviceHeight(context) * 0.15,
+                    left: 0,
+                    right: 0,
+                    bottom: DeviceInfo.deviceHeight(context) * 0.1,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: snapshot.data,
+                      ),
+                    ),
+                  );
+                } else {
+                  return Stack(
+                    children: [
+                      Positioned(
+                        top: DeviceInfo.deviceHeight(context) * 0.45,
+                        left: 0,
+                        right: 0,
+                        child: LinearProgressIndicator(
+                          backgroundColor: Colors.grey,
                         ),
                       ),
-                    );
-                  } else {
-                    return Stack(
-                      children: [
-                        Positioned(
-                          top: DeviceInfo.deviceHeight(context) * 0.45,
-                          left: 0,
-                          right: 0,
-                          child: LinearProgressIndicator(
-                            backgroundColor: Colors.grey,
+                      Positioned(
+                        top: DeviceInfo.deviceHeight(context) * 0.5,
+                        left: 0,
+                        right: 0,
+                        child: Text(
+                          'Loading Data...',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: DeviceInfo.deviceWidth(context) * 0.08,
+                            fontFamily: 'PermanentMarker',
                           ),
                         ),
-                        Positioned(
-                          top: DeviceInfo.deviceHeight(context) * 0.5,
-                          left: 0,
-                          right: 0,
-                          child: Text(
-                            'Loading Data...',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: DeviceInfo.deviceWidth(context) * 0.08,
-                              fontFamily: 'PermanentMarker',
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                },
-              ),
+                      ),
+                    ],
+                  );
+                }
+              },
             ),
             Positioned(
               top: DeviceInfo.deviceHeight(context) * 0.7,

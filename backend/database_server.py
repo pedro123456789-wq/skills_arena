@@ -388,7 +388,7 @@ def get_skill_video():
 		password = headers['password']
 		skill_name = headers['skill_name']
 	except:
-		return ('Missinf required headers', 404, [['Content-Type', 'text/html']])
+		return ('Missing required headers', 404, [['Content-Type', 'text/html']])
 
 
 	if isAuthenticated(username, password):

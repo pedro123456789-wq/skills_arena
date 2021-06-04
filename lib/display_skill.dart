@@ -25,6 +25,7 @@ class DisplaySkill extends StatefulWidget {
 class _DisplaySkillState extends State<DisplaySkill> {
   ChewieController chewieController;
   VideoPlayerController controller;
+  Future future;
 
   Future<ChewieController> getSkillVideo() async {
     Response response = await RequestHandler.sendPost(
@@ -40,39 +41,51 @@ class _DisplaySkillState extends State<DisplaySkill> {
       await GlobalFunctions.getTempPath('output_video.mp4'),
     );
 
-    if (outputFile.existsSync()) {
-      outputFile.delete();
-    }
-
-    outputFile = await File(
-      await GlobalFunctions.getTempPath(
-        'output_video.mp4',
-      ),
-    ).writeAsBytes(
+    await outputFile.writeAsBytes(
       response.bodyBytes,
     );
+
+    if (controller != null) {
+      final oldController = controller;
+      oldController.dispose();
+    }
 
     controller = VideoPlayerController.file(
       outputFile,
     )..initialize().then(
         (_) {
-          setState(() {});
+          setState(
+            () {},
+          );
         },
       );
 
     chewieController = ChewieController(
       videoPlayerController: controller,
-      aspectRatio: 3 / 2,
+      aspectRatio: controller.value.aspectRatio,
       autoPlay: false,
       looping: false,
+    );
+
+    setState(
+      () {
+        controller = null;
+      },
     );
 
     return chewieController;
   }
 
   @override
-  void dispose(){
+  void initState() {
+    super.initState();
+    future = getSkillVideo();
+  }
+
+  @override
+  void dispose() {
     super.dispose();
+    controller = null;
     controller.dispose();
     chewieController.dispose();
   }
@@ -100,7 +113,7 @@ class _DisplaySkillState extends State<DisplaySkill> {
               ),
             ),
             FutureBuilder(
-              future: getSkillVideo(),
+              future: future,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasData) {
                   return Positioned(
