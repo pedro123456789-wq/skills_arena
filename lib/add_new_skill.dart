@@ -3,6 +3,7 @@ import './text_input.dart';
 import './record_video.dart';
 import './request_handler.dart';
 import './landing_page.dart';
+import './delete_skill.dart';
 
 import 'dart:io';
 import 'package:http/http.dart';

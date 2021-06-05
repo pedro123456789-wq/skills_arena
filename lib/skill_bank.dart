@@ -7,6 +7,8 @@ import './display_skill.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
+
+
 class SkillBank extends StatelessWidget {
   Future<List<Widget>> getSkills(BuildContext context) async {
     List<Widget> skillRows = [];
@@ -127,21 +129,42 @@ class SkillBank extends StatelessWidget {
               top: DeviceInfo.deviceHeight(context) * 0.7,
               left: 0,
               right: 0,
-              child: ElevatedButton(
-                onPressed: () {
-                  GlobalFunctions.navigate(
-                    context,
-                    AddNewSkill(),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.black,
-                ),
-                child: Icon(
-                  Icons.add,
-                  color: Colors.redAccent,
-                  size: DeviceInfo.deviceWidth(context) * 0.15,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      GlobalFunctions.navigate(
+                        context,
+                        AddNewSkill(),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.black,
+                    ),
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.greenAccent,
+                      size: DeviceInfo.deviceWidth(context) * 0.15,
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      GlobalFunctions.navigate(
+                        context,
+                        AddNewSkill(),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.black,
+                    ),
+                    child: Icon(
+                      Icons.delete,
+                      color: Colors.redAccent,
+                      size: DeviceInfo.deviceWidth(context) * 0.15,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

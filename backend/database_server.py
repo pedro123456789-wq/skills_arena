@@ -419,12 +419,45 @@ def get_skill_video():
 
 	if isAuthenticated(username, password):
 		user = User.query.filter_by(username = username).all()[0]
-		user_skill= Skill.query.filter_by(user_id = user.id, name = skill_name).all()[0]
+		user_skill = Skill.query.filter_by(user_id = user.id, name = skill_name).all()[0]
 		skill_video_path = user_skill.video_file
 
 		response = flask.make_response(open(skill_video_path, 'rb').read())
 
 		return response
+	else:
+		return ('Invalid Credentials', 404, [['Content-Type', 'text/html']])
+
+
+
+@app.route('/delete-skill', methods = ['POST'])
+def delete_skill():
+	try:
+		headers = flask.request.headers
+		username = headers['username']
+		password = headers['password']
+		skill_name = headers['skill_name']
+	except:
+		return ('Required Headers Missing', 404, [['Content-Type', 'text/html']])
+
+
+	if isAuthenticated(username, password):
+		user = User.query.filter_by(username = username).all()[0]
+		selected_skill = Skill.query.filter_by(user_id = user.id, name = skill_name).all()
+
+		if len(selected_skill) == 1:
+			db.session.delete(selected_skill[0])
+			db.session.commit()
+
+			try:
+				os.remove(f'skill_videos/{username}/{skill_name}.mp4')
+			except:
+				pass 
+
+			return ('Removed Skill from database', 200, [['Content-Type', 'text/html']])
+		else:
+			return ('Skill is not in database', 404, [['Content-Type', 'text/html']])
+
 	else:
 		return ('Invalid Credentials', 404, [['Content-Type', 'text/html']])
 
