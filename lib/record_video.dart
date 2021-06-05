@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:async';
 
-//TODO: Add Video timer
+
 
 Stream<int> stopWatchStream() {
   StreamController<int> streamController;

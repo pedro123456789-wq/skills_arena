@@ -12,8 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
-//TODO: Check if user has less than 5 skills saved
-//TODO: Add option to delete skill
 
 class AddNewSkill extends StatefulWidget {
   bool isVideoSelected;

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-
 Stream<int> stopWatchStream() {
   StreamController<int> streamController;
   Timer timer;
@@ -121,6 +120,7 @@ class _LongDistanceRunState extends State<LongDistanceRun> {
       if (previousPosition != null) {
         print('${currentPosition.longitude} ${currentPosition.latitude}');
         print('${previousPosition.longitude} ${previousPosition.latitude}');
+        print(currentPosition.accuracy);
 
         if (this.mounted) {
           setState(
@@ -134,9 +134,11 @@ class _LongDistanceRunState extends State<LongDistanceRun> {
 
               print(distanceIncrement);
 
-              if (distanceIncrement >= 50) {
-                previousPosition = currentPosition;
+              if (distanceIncrement >
+                  (currentPosition.accuracy +
+                      (currentPosition.accuracy * 0.1))) {
                 distanceCovered += distanceIncrement / 1000;
+                previousPosition = currentPosition;
               }
 
               if (distanceCovered > currentKilometre) {

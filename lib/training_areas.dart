@@ -19,7 +19,7 @@ class _TrainingAreasState extends State<TrainingAreas> {
   Future<File> getImage() async {
     //get position
     Position currentPosition = await Geolocator.getCurrentPosition(
-      timeLimit: Duration(seconds: 1),
+      timeLimit: Duration(seconds: 10),
     );
 
     double latitude = currentPosition.latitude;

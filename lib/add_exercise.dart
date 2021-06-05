@@ -5,14 +5,12 @@ import './create_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 
-
-
 class AddExercise extends StatefulWidget {
   @override
   _AddExerciseState createState() => _AddExerciseState();
 }
 
-//add error message to force user to enter exercise name and duration
+//TODO: add error message to force user to enter exercise name and duration
 
 class _AddExerciseState extends State<AddExercise> {
   final exerciseNameController = TextEditingController();
@@ -57,21 +55,25 @@ class _AddExerciseState extends State<AddExercise> {
               child: ElevatedButton(
                 onPressed: () {
                   Picker(
+                    height: DeviceInfo.deviceHeight(context) * 0.2,
                     backgroundColor: Colors.white,
-                    adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
-                      const NumberPickerColumn(
-                        begin: 0,
-                        end: 999,
-                        suffix: Text(' minutes'),
-                        jump: 1,
-                      ),
-                      const NumberPickerColumn(
-                        begin: 0,
-                        end: 59,
-                        suffix: Text(' seconds'),
-                        jump: 1,
-                      ),
-                    ]),
+                    adapter: NumberPickerAdapter(
+                      data: <NumberPickerColumn>[
+
+                        const NumberPickerColumn(
+                          begin: 0,
+                          end: 999,
+                          suffix: Text(' minutes'),
+                          jump: 1,
+                        ),
+                        const NumberPickerColumn(
+                          begin: 0,
+                          end: 59,
+                          suffix: Text(' seconds'),
+                          jump: 1,
+                        ),
+                      ],
+                    ),
                     delimiter: <PickerDelimiter>[
                       PickerDelimiter(
                         child: Container(
@@ -149,7 +151,7 @@ class _AddExerciseState extends State<AddExercise> {
 
                   if (exerciseName != null) {
                     AppGlobals.exercisesList.add(exerciseName);
-                  }else{
+                  } else {
                     AppGlobals.exercisesList.add('Anonymous Exercise');
                   }
                   AppGlobals.exerciseDurations.add(durationSeconds);

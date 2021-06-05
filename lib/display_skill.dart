@@ -9,7 +9,6 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
 //TODO: Fix Video player to make it display the videos
-//TODO: Fix long distance running manager
 
 class DisplaySkill extends StatefulWidget {
   final String skillName;
