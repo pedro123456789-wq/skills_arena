@@ -12,10 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
-
 //TODO: Check if user has less than 5 skills saved
 //TODO: Add option to delete skill
-
 
 class AddNewSkill extends StatefulWidget {
   bool isVideoSelected;
@@ -31,7 +29,8 @@ class _AddNewSkillState extends State<AddNewSkill> {
   ImagePicker picker = new ImagePicker();
   File selectedFile;
   bool isError = false;
-  String errorMessage = 'The video is too long or too large or has an invalid format';
+  String errorMessage =
+      'The video is too long or too large or has an invalid format';
   VideoPlayerController controller;
 
   Future<void> getVideo() async {
@@ -235,6 +234,24 @@ class _AddNewSkillState extends State<AddNewSkill> {
                       );
 
                       return;
+                    }
+
+                    Response skillsSaved = await RequestHandler.sendPost(
+                      {
+                        'username': (await GlobalFunctions.getCredentials())[0],
+                        'password': (await GlobalFunctions.getCredentials())[1]
+                      },
+                      'http://192.168.1.142:8090/skills-saved',
+                    );
+
+                    if (int.parse(skillsSaved.body) > 10) {
+                      setState(
+                        () {
+                          isError = true;
+                          errorMessage =
+                              'Users cannot have more than 10 skills saved simultaneously';
+                        },
+                      );
                     }
 
                     if (skillName.length > 0) {

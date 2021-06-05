@@ -3,6 +3,7 @@ import './navigation_bar.dart';
 import './add_new_skill.dart';
 import './request_handler.dart';
 import './display_skill.dart';
+import './delete_skill.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -152,7 +153,7 @@ class SkillBank extends StatelessWidget {
                     onPressed: () {
                       GlobalFunctions.navigate(
                         context,
-                        AddNewSkill(),
+                        DeleteSkill(),
                       );
                     },
                     style: ElevatedButton.styleFrom(

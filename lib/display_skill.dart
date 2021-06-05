@@ -64,6 +64,11 @@ class _DisplaySkillState extends State<DisplaySkill> {
 
   @override
   void dispose() {
+    chewieController.videoPlayerController.removeListener(
+      () {
+        setState(() {});
+      },
+    );
     chewieController.videoPlayerController.dispose();
     chewieController.dispose();
     super.dispose();

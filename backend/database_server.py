@@ -298,8 +298,21 @@ def get_distances():
 		return ('Invalid Credentials', 404, [['Content-Type', 'text/html']])
 
 
+@app.route('/skills-saved', methods = ['POST'])
+def skills_saved():
+	try:
+		headers = flask.request.headers
+		username = headers['username']
+		password = headers['password']
+	except:
+		return ('Invalid Credentials', 404, [['Content-Type', 'text/html']])
 
-#check if user has less than four skills saved
+
+	user = User.query.filter_by(username = username).all()[0]
+	skills = Skill.query.filter_by(user_id = user.id).all()
+
+	return (str(len(skills)), 200, [['Content-Type', 'text/html']])
+
 
 @app.route('/is-skill-name-valid', methods = ['POST'])
 def is_skill_name_valid():
@@ -460,6 +473,7 @@ def delete_skill():
 
 	else:
 		return ('Invalid Credentials', 404, [['Content-Type', 'text/html']])
+
 
 
 if __name__ == '__main__':
