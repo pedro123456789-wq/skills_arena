@@ -2,9 +2,8 @@ import './main.dart';
 import './sprinting_session.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_picker/flutter_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
-
 
 class AddSprintingExercise extends StatefulWidget {
   @override
@@ -13,7 +12,6 @@ class AddSprintingExercise extends StatefulWidget {
 
 class _AddSprintingExerciseState extends State<AddSprintingExercise> {
   final exerciseNameController = TextEditingController();
-  int minutes;
   int seconds;
   double currentDistance = 100;
 
@@ -87,63 +85,58 @@ class _AddSprintingExerciseState extends State<AddSprintingExercise> {
               right: 0,
               child: ElevatedButton(
                 onPressed: () {
-                  Picker(
-                    backgroundColor: Colors.white,
-                    adapter: NumberPickerAdapter(data: <NumberPickerColumn>[
-                      const NumberPickerColumn(
-                        begin: 0,
-                        end: 999,
-                        suffix: Text(' minutes'),
-                        jump: 1,
-                      ),
-                      const NumberPickerColumn(
-                        begin: 0,
-                        end: 59,
-                        suffix: Text(' seconds'),
-                        jump: 1,
-                      ),
-                    ]),
-                    delimiter: <PickerDelimiter>[
-                      PickerDelimiter(
-                        child: Container(
-                          width: DeviceInfo.deviceWidth(context) * 0.05,
-                          alignment: Alignment.center,
-                          child: Icon(
-                            Icons.more_vert,
-                            color: Colors.grey,
-                            size: DeviceInfo.deviceWidth(context) * 0.15,
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Center(
+                          child: Text(
+                            'Select a Duration',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: DeviceInfo.deviceWidth(context) * 0.05,
+                              fontFamily: 'PermanentMarker',
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                    hideHeader: true,
-                    confirmText: 'OK',
-                    cancelTextStyle: TextStyle(
-                      color: Colors.redAccent,
-                      fontSize: DeviceInfo.deviceWidth(context) * 0.05,
-                    ),
-                    confirmTextStyle: TextStyle(
-                        inherit: false,
-                        color: Colors.greenAccent,
-                        fontSize: DeviceInfo.deviceWidth(context) * 0.05),
-                    title: const Text(
-                      'Select duration',
-                      style: TextStyle(
-                        color: Colors.greenAccent,
-                      ),
-                    ),
-                    selectedTextStyle: TextStyle(
-                      color: Colors.greenAccent,
-                    ),
-                    onConfirm: (Picker picker, List<int> value) {
-                      setState(
-                        () {
-                          minutes = picker.getSelectedValues()[0];
-                          seconds = picker.getSelectedValues()[1];
-                        },
+                        content: Container(
+                          height: DeviceInfo.deviceHeight(context) * 0.5,
+                          width: DeviceInfo.deviceWidth(context) * 0.9,
+                          child: Column(
+                            children: [
+                              Container(
+                                width: DeviceInfo.deviceWidth(context) * 0.8,
+                                height: DeviceInfo.deviceHeight(context) * 0.4,
+                                child: CupertinoTimerPicker(
+                                  mode: CupertinoTimerPickerMode.ms,
+                                  onTimerDurationChanged: (value) {
+                                    seconds = value.inSeconds;
+                                  },
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(
+                                        () {
+                                      Navigator.pop(context);
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.white,
+                                ),
+                                child: Icon(
+                                  Icons.check,
+                                  color: Colors.black,
+                                  size: DeviceInfo.deviceWidth(context) * 0.12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       );
                     },
-                  ).showDialog(context);
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,
@@ -160,7 +153,15 @@ class _AddSprintingExerciseState extends State<AddSprintingExercise> {
               left: 0,
               right: 0,
               child: Text(
-                GlobalFunctions.timeString(minutes, seconds),
+                (seconds != null)
+                    ? GlobalFunctions.timeString(
+                  seconds ~/ 60,
+                  seconds - ((seconds ~/ 60) * 60),
+                )
+                    : GlobalFunctions.timeString(
+                  null,
+                  null,
+                ),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.grey,
@@ -175,8 +176,7 @@ class _AddSprintingExerciseState extends State<AddSprintingExercise> {
               right: 0,
               child: ElevatedButton(
                 onPressed: () {
-                  int durationSeconds = (minutes * 60) + seconds;
-                  AppGlobals.exerciseDurations.add(durationSeconds);
+                  AppGlobals.exerciseDurations.add(seconds);
                   AppGlobals.sprintDistances.add(currentDistance);
 
                   Navigator.push(
