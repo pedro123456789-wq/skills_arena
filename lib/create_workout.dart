@@ -4,6 +4,8 @@ import './text_input.dart';
 import './landing_page.dart';
 import './add_workout_exercise.dart';
 import './request_handler.dart';
+import './swipe_back_detector.dart';
+import './physical_training.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -49,10 +51,13 @@ class _CreateWorkoutState extends State<CreateWorkout> {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: TextInput(
-                workoutNameController,
-                DeviceInfo.deviceWidth(context) * 0.1,
-                AppGlobals.workoutName,
+              child: SwipeBackDetector(
+                PhysicalTraining(),
+                child: TextInput(
+                  workoutNameController,
+                  DeviceInfo.deviceWidth(context) * 0.1,
+                  AppGlobals.workoutName,
+                ),
               ),
             ),
             Positioned(

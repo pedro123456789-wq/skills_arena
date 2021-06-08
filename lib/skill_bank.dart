@@ -4,6 +4,8 @@ import './add_new_skill.dart';
 import './request_handler.dart';
 import './display_skill.dart';
 import './delete_skill.dart';
+import './swipe_back_detector.dart';
+import './technical_training.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -71,13 +73,16 @@ class SkillBank extends StatelessWidget {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: Text(
-                'Skill Bank',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.greenAccent,
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.1,
-                  fontFamily: 'PermanentMarker',
+              child: SwipeBackDetector(
+                TechnicalTraining(),
+                child: Text(
+                  'Skill Bank',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: DeviceInfo.deviceWidth(context) * 0.1,
+                    fontFamily: 'PermanentMarker',
+                  ),
                 ),
               ),
             ),

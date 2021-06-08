@@ -1,5 +1,8 @@
 import './main.dart';
 import './video_preview.dart';
+import './skill_bank.dart';
+import './swipe_back_detector.dart';
+import 'add_new_skill.dart';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -224,13 +227,16 @@ class _RecordVideoState extends State<RecordVideo>
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: Text(
-                'Record Video',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.greenAccent,
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.1,
-                  fontFamily: 'PermanentMarker',
+              child: SwipeBackDetector(
+                AddNewSkill(),
+                child: Text(
+                  'Record Video',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: DeviceInfo.deviceWidth(context) * 0.1,
+                    fontFamily: 'PermanentMarker',
+                  ),
                 ),
               ),
             ),

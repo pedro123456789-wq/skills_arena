@@ -54,11 +54,9 @@ class _LandingPageState extends State<LandingPage> {
               right: 0,
               child: ImageButton(
                 () {
-                  Navigator.push(
+                  GlobalFunctions.navigate(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => TechnicalTraining(),
-                    ),
+                    TechnicalTraining(),
                   );
                 },
                 'assets/technical_training.png',
@@ -74,12 +72,7 @@ class _LandingPageState extends State<LandingPage> {
               right: 0,
               child: ImageButton(
                 () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PhysicalTraining(),
-                    ),
-                  );
+                  GlobalFunctions.navigate(context, PhysicalTraining());
                 },
                 'assets/physical_training.png',
                 'Physical Training',

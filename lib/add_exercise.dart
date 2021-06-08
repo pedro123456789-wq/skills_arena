@@ -1,6 +1,7 @@
 import './main.dart';
 import './text_input.dart';
 import './create_session.dart';
+import './swipe_back_detector.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,9 +12,8 @@ class AddExercise extends StatefulWidget {
 }
 
 //TODO: add error message to force user to enter exercise name and duration
-//TODO: Check session creating function to see if it is using session name
-//TODO: create new file for time dialogue and implement it in other session creating pages
-
+//TODO: add option to delete exercises and see session layout
+//TODO: Make gesture detector work everywhere on pages
 
 class _AddExerciseState extends State<AddExercise> {
   final exerciseNameController = TextEditingController();
@@ -30,10 +30,13 @@ class _AddExerciseState extends State<AddExercise> {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: TextInput(
-                exerciseNameController,
-                DeviceInfo.deviceWidth(context) * 0.1,
-                'Exercise Name',
+              child: SwipeBackDetector(
+                CreateSession(),
+                child: TextInput(
+                  exerciseNameController,
+                  DeviceInfo.deviceWidth(context) * 0.1,
+                  'Exercise Name',
+                ),
               ),
             ),
             Positioned(

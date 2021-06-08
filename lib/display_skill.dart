@@ -1,6 +1,8 @@
 import './main.dart';
 import './request_handler.dart';
 import './navigation_bar.dart';
+import './swipe_back_detector.dart';
+import './skill_bank.dart';
 
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -85,13 +87,16 @@ class _DisplaySkillState extends State<DisplaySkill> {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: Text(
-                widget.skillName,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.greenAccent,
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.1,
-                  fontFamily: 'PermanentMarker',
+              child: SwipeBackDetector(
+                SkillBank(), 
+                child: Text(
+                  widget.skillName,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: DeviceInfo.deviceWidth(context) * 0.1,
+                    fontFamily: 'PermanentMarker',
+                  ),
                 ),
               ),
             ),

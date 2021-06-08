@@ -4,6 +4,8 @@ import './text_input.dart';
 import './add_exercise.dart';
 import './landing_page.dart';
 import './request_handler.dart';
+import './swipe_back_detector.dart';
+import './technical_training.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,10 +51,13 @@ class _CreateSessionState extends State<CreateSession> {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: TextInput(
-                sessionNameController,
-                DeviceInfo.deviceWidth(context) * 0.1,
-                AppGlobals.sessionName,
+              child: SwipeBackDetector(
+                TechnicalTraining(),
+                child: TextInput(
+                  sessionNameController,
+                  DeviceInfo.deviceWidth(context) * 0.1,
+                  AppGlobals.sessionName,
+                ),
               ),
             ),
             Positioned(

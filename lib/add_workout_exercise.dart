@@ -1,10 +1,12 @@
 import './main.dart';
 import './text_input.dart';
 import './create_workout.dart';
+import './swipe_back_detector.dart';
+import './create_workout.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_picker/flutter_picker.dart';
+
 
 class AddWorkoutExercise extends StatefulWidget {
   @override
@@ -26,10 +28,13 @@ class _AddWorkoutExerciseState extends State<AddWorkoutExercise> {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: TextInput(
-                workoutExerciseNameController,
-                DeviceInfo.deviceWidth(context) * 0.1,
-                'Exercise Name',
+              child: SwipeBackDetector(
+                CreateWorkout(),
+                child: TextInput(
+                  workoutExerciseNameController,
+                  DeviceInfo.deviceWidth(context) * 0.1,
+                  'Exercise Name',
+                ),
               ),
             ),
             Positioned(

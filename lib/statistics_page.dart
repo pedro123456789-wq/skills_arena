@@ -1,3 +1,5 @@
+import 'package:flutter/gestures.dart';
+
 import './main.dart';
 import './navigation_bar.dart';
 import './request_handler.dart';
@@ -388,8 +390,9 @@ class _StatsPageState extends State<StatsPage> {
               top: DeviceInfo.deviceHeight(context) * 0.7,
               left: 0,
               right: 0,
-              child: ElevatedButton(
-                onPressed: () {
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onHorizontalDragEnd: (DragEndDetails details) {
                   setState(
                     () {
                       if (futureIndex == 0) {
@@ -402,13 +405,13 @@ class _StatsPageState extends State<StatsPage> {
                     },
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.black,
-                ),
-                child: Icon(
-                  Icons.navigate_next,
-                  color: Colors.greenAccent,
-                  size: DeviceInfo.deviceWidth(context) * 0.15,
+                child: Container(
+                  width: DeviceInfo.deviceWidth(context),
+                  child: Icon(
+                    Icons.swipe,
+                    color: Colors.greenAccent,
+                    size: DeviceInfo.deviceWidth(context) * 0.15,
+                  ),
                 ),
               ),
             ),

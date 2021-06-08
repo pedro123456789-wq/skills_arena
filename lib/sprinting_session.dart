@@ -4,8 +4,12 @@ import './add_sprinting_exercise.dart';
 import './add_rest.dart';
 import './session_layout.dart';
 import './session_manager.dart';
+import './swipe_back_detector.dart';
+import './physical_training.dart';
 
 import 'package:flutter/material.dart';
+
+
 
 class SprintingSession extends StatelessWidget {
   List<String> mergeDurations() {
@@ -49,13 +53,16 @@ class SprintingSession extends StatelessWidget {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: Text(
-                'Sprinting Session',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.greenAccent,
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.1,
-                  fontFamily: 'PermanentMarker',
+              child: SwipeBackDetector(
+                PhysicalTraining(),
+                child: Text(
+                  'Sprinting Session',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: DeviceInfo.deviceWidth(context) * 0.08,
+                    fontFamily: 'PermanentMarker',
+                  ),
                 ),
               ),
             ),

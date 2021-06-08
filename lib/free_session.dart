@@ -1,6 +1,8 @@
 import './main.dart';
 import './navigation_bar.dart';
 import './free_session_manager.dart';
+import './swipe_back_detector.dart';
+import './technical_training.dart';
 
 import 'package:flutter/material.dart';
 
@@ -18,13 +20,16 @@ class FreeSession extends StatelessWidget {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: Text(
-                'Free Session',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.greenAccent,
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.1,
-                  fontFamily: 'PermanentMarker',
+              child: SwipeBackDetector(
+                TechnicalTraining(),
+                child: Text(
+                  'Free Session',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: DeviceInfo.deviceWidth(context) * 0.1,
+                    fontFamily: 'PermanentMarker',
+                  ),
                 ),
               ),
             ),

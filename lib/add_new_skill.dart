@@ -3,7 +3,8 @@ import './text_input.dart';
 import './record_video.dart';
 import './request_handler.dart';
 import './landing_page.dart';
-import './delete_skill.dart';
+import './skill_bank.dart';
+import 'swipe_back_detector.dart';
 
 import 'dart:io';
 import 'package:http/http.dart';
@@ -11,7 +12,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
-
 
 class AddNewSkill extends StatefulWidget {
   bool isVideoSelected;
@@ -74,13 +74,16 @@ class _AddNewSkillState extends State<AddNewSkill> {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: Text(
-                'New Skill',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.1,
-                  fontFamily: 'PermanentMarker',
+              child: SwipeBackDetector(
+                SkillBank(),
+                child: Text(
+                  'New Skill',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.redAccent,
+                    fontSize: DeviceInfo.deviceWidth(context) * 0.1,
+                    fontFamily: 'PermanentMarker',
+                  ),
                 ),
               ),
             ),

@@ -1,7 +1,11 @@
 import './main.dart';
 import './long_distance_run.dart';
+import './swipe_back_detector.dart';
+import './physical_training.dart';
 
 import 'package:flutter/material.dart';
+
+
 
 class LongDistanceRunStart extends StatelessWidget {
   @override
@@ -15,13 +19,16 @@ class LongDistanceRunStart extends StatelessWidget {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: Text(
-                'Long Distance Run',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.greenAccent,
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.1,
-                  fontFamily: 'PermanentMarker',
+              child: SwipeBackDetector(
+                PhysicalTraining(),
+                child: Text(
+                  'Long Distance Run',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: DeviceInfo.deviceWidth(context) * 0.1,
+                    fontFamily: 'PermanentMarker',
+                  ),
                 ),
               ),
             ),

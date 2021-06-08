@@ -44,7 +44,8 @@ dependencies:
   image_picker: ^0.8.0
   media_info: ^0.7.0
   geolocator: ^7.0.3
-  huawei_location: ^5.1.0+301
+  back_button_interceptor: ^5.0.0
+
 
 
 

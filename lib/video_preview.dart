@@ -1,6 +1,8 @@
 import './main.dart';
 import './record_video.dart';
 import './add_new_skill.dart';
+import './swipe_back_detector.dart';
+import './skill_bank.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -44,12 +46,11 @@ class _VideoPreviewState extends State<VideoPreview> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     super.dispose();
     controller.dispose();
     chewieController.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {

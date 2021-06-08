@@ -1,9 +1,13 @@
 import './main.dart';
 import './sprinting_session.dart';
+import './swipe_back_detector.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
+
+
+//TODO: Add today time trained everyday
 
 class AddSprintingExercise extends StatefulWidget {
   @override
@@ -26,13 +30,16 @@ class _AddSprintingExerciseState extends State<AddSprintingExercise> {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: Text(
-                'Distance (meters)',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.greenAccent,
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.1,
-                  fontFamily: 'PermanentMarker',
+              child: SwipeBackDetector(
+                SprintingSession(),
+                child: Text(
+                  'Distance (meters)',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: DeviceInfo.deviceWidth(context) * 0.07,
+                    fontFamily: 'PermanentMarker',
+                  ),
                 ),
               ),
             ),
@@ -75,7 +82,7 @@ class _AddSprintingExerciseState extends State<AddSprintingExercise> {
                 style: TextStyle(
                   color: Colors.redAccent,
                   fontFamily: 'PermanentMarker',
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.1,
+                  fontSize: DeviceInfo.deviceWidth(context) * 0.07,
                 ),
               ),
             ),

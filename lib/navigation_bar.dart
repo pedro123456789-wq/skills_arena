@@ -1,7 +1,7 @@
 import './main.dart';
 
 import 'package:flutter/material.dart';
-
+import 'package:back_button_interceptor/back_button_interceptor.dart';
 
 class NavigationBar extends StatefulWidget {
   @override
@@ -10,20 +10,34 @@ class NavigationBar extends StatefulWidget {
 
 class _NavigationBarState extends State<NavigationBar> {
   @override
+  void initState() {
+    super.initState();
+    BackButtonInterceptor.add(myInterceptor);
+  }
+
+  @override
+  void dispose() {
+    BackButtonInterceptor.remove(myInterceptor);
+    print('Removed Interceptor');
+    super.dispose();
+  }
+
+  bool myInterceptor(bool stopDefaultButtonEvent, RouteInfo info) {
+    return true;
+  }
+
+  void press(int number) {
+    GlobalFunctions.navigate(context, AppGlobals.routes[number]);
+
+    setState(
+      () {
+        AppGlobals.navigationBarIndex = number;
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    void press(int number) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => AppGlobals.routes[number]),
-      );
-
-      setState(
-        () {
-          AppGlobals.navigationBarIndex = number;
-        },
-      );
-    }
-
     return BottomNavigationBar(
       unselectedItemColor: Colors.grey,
       selectedItemColor: Colors.redAccent,

@@ -1,5 +1,8 @@
 import './main.dart';
 import './session_manager.dart';
+import './start_session.dart';
+import './start_workout.dart';
+import './swipe_back_detector.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -61,13 +64,16 @@ class SessionLayout extends StatelessWidget {
               top: DeviceInfo.deviceWidth(context) * 0.01,
               left: 0,
               right: 0,
-              child: Text(
-                sessionName,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.greenAccent,
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.1,
-                  fontFamily: 'PermanentMarker',
+              child: SwipeBackDetector(
+                (isWorkout) ? StartWorkout() : StartSession(),
+                child: Text(
+                  sessionName,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: DeviceInfo.deviceWidth(context) * 0.1,
+                    fontFamily: 'PermanentMarker',
+                  ),
                 ),
               ),
             ),
