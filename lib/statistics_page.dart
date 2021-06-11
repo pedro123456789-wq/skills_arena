@@ -29,6 +29,19 @@ class _StatsPageState extends State<StatsPage> {
     return percentages;
   }
 
+  List<String> getDatesInRange(DateTime startingDate, DateTime endingDate) {
+    List<String> days = [];
+
+    for (int i = 0; i <= endingDate.difference(startingDate).inDays; i++) {
+      DateTime currentDay =
+          DateTime(startingDate.year, startingDate.month, startingDate.day + i);
+
+      days.add('${currentDay.day}/${currentDay.month}/${currentDay.year}');
+    }
+
+    return days;
+  }
+
   Future<Widget> getDistances(BuildContext context) async {
     //send request to database to get user records
     Response databaseResponse = await RequestHandler.sendPost(
@@ -42,11 +55,37 @@ class _StatsPageState extends State<StatsPage> {
     String databaseData = databaseResponse.body;
     List<String> distanceData = databaseData.split('\n');
     distanceData = distanceData.sublist(1, distanceData.length);
+    String firstDate = distanceData[0].split('-')[1];
 
+    //initialize dictionaries to store distances ran in different dates
     Map<String, double> longDistances = {};
     Map<String, double> sprints = {};
-    List<String> dates = [];
+    Map<String, double> totals = {};
 
+    //get all dates between starting and ending date
+    List<String> dates = getDatesInRange(
+      DateTime(
+        int.parse(
+          firstDate.split('/')[2],
+        ),
+        int.parse(
+          firstDate.split('/')[1],
+        ),
+        int.parse(
+          firstDate.split('/')[0],
+        ),
+      ),
+      DateTime.now(),
+    );
+
+    //initialize all dates in all dictionaries
+    for (String date in dates) {
+      longDistances[date] = 0;
+      sprints[date] = 0;
+      totals[date] = 0;
+    }
+
+    //add distance ran to each date
     for (String distance in distanceData) {
       double distanceKm = double.parse(distance.split('-')[0]);
       String date = distance.split('-')[1];
@@ -60,48 +99,26 @@ class _StatsPageState extends State<StatsPage> {
         outputMap = sprints;
       }
 
-      if (outputMap.keys.contains(date)) {
-        outputMap[date] += distanceKm;
-      } else {
-        outputMap[date] = distanceKm;
-        if (dates.contains(date) == false) {
-          dates.add(date);
-        }
-      }
+      outputMap[date] += distanceKm;
+      totals[date] += distanceKm;
     }
 
-    List<double> longDistancesTotals = [];
-    List<double> sprintTotals = [];
-    List<double> dailyTotals = [];
+    //convert dictionaries into lists
+    List<double> longDistancesList = [];
+    List<double> sprintsList = [];
+    List<double> totalsList = [];
 
-    for (String date in dates) {
-      double longDistance;
-      double sprintDistance;
+    longDistances.forEach((key, value) => longDistancesList.add(value));
+    sprints.forEach((key, value) => sprintsList.add(value));
+    totals.forEach((key, value) => totalsList.add(value));
 
-      if (longDistances.keys.contains(date)) {
-        longDistance = longDistances[date];
-      } else {
-        longDistance = 0;
-      }
-
-      if (sprints.keys.contains(date)) {
-        sprintDistance = sprints[date];
-      } else {
-        sprintDistance = 0;
-      }
-
-      longDistancesTotals.add(longDistance);
-      sprintTotals.add(sprintDistance);
-      dailyTotals.add(
-        longDistance + sprintDistance,
-      );
-    }
-
-    double maxValue = dailyTotals.reduce(max);
+    //calculate max value and use it to calculate percentages for y-axis labels
+    double maxValue = totalsList.reduce(max);
 
     //generate axis labels for line graph
     int increments;
 
+    //add y-axis labels
     List<String> yLabels = [];
     if (maxValue / 10 < 1) {
       increments = 1;
@@ -109,6 +126,7 @@ class _StatsPageState extends State<StatsPage> {
       increments = (maxValue / 10).round();
     }
 
+    //calculate y-increments
     maxValue = increments.toDouble() * 10;
     for (int i = increments; i <= maxValue; i += increments) {
       yLabels.add(
@@ -116,6 +134,7 @@ class _StatsPageState extends State<StatsPage> {
       );
     }
 
+    //create list with x labels (starting and ending date)
     List<String> xLabels = [
       dates[0],
     ];
@@ -126,24 +145,26 @@ class _StatsPageState extends State<StatsPage> {
 
     xLabels.add('Today');
 
+    //add data to feature list as separate sub-plots
     List<Feature> features = [
       Feature(
         title: 'Total',
-        data: convertToPercentages(dailyTotals, maxValue),
+        data: convertToPercentages(totalsList, maxValue),
         color: Colors.purpleAccent,
       ),
       Feature(
         title: 'Long Distance',
-        data: convertToPercentages(longDistancesTotals, maxValue),
+        data: convertToPercentages(longDistancesList, maxValue),
         color: Colors.blue,
       ),
       Feature(
         title: 'Sprints',
-        data: convertToPercentages(sprintTotals, maxValue),
+        data: convertToPercentages(sprintsList, maxValue),
         color: Colors.cyanAccent,
       ),
     ];
 
+    //return column with labels and graph with data
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -186,72 +207,78 @@ class _StatsPageState extends State<StatsPage> {
     Response databaseResponse = await RequestHandler.sendPost(
       {
         'username': (await GlobalFunctions.getCredentials())[0],
-        'password': (await GlobalFunctions.getCredentials())[1]
+        'password': (await GlobalFunctions.getCredentials())[1],
       },
       'http://192.168.1.142:8090/get-workout-data',
     );
 
-    //parse response data
     String databaseData = databaseResponse.body;
-    List<String> durationData = databaseData.split('\n');
-    durationData = durationData.sublist(1, durationData.length);
+    List<String> distanceData = databaseData.split('\n');
+    distanceData = distanceData.sublist(1, distanceData.length);
+    String firstDate = distanceData[0].split('-')[1];
 
+    //initialize dictionaries to store distances ran in different dates
     Map<String, double> physicalDurations = {};
     Map<String, double> technicalDurations = {};
-    List<String> dates = [];
+    Map<String, double> totals = {};
 
-    for (String session in durationData) {
-      double duration = double.parse(session.split('-')[0]);
-      String date = session.split('-')[1];
-      String type = session.split('-')[2];
-      Map outputFile;
+    //get all dates between starting and ending date
+    List<String> dates = getDatesInRange(
+      DateTime(
+        int.parse(
+          firstDate.split('/')[2],
+        ),
+        int.parse(
+          firstDate.split('/')[1],
+        ),
+        int.parse(
+          firstDate.split('/')[0],
+        ),
+      ),
+      DateTime.now(),
+    );
 
-      if (type == 'Session') {
-        outputFile = technicalDurations;
-      } else {
-        outputFile = physicalDurations;
-      }
-
-      if (outputFile.keys.contains(date)) {
-        outputFile[date] += duration;
-      } else {
-        outputFile[date] = duration;
-        if (dates.contains(date) == false) {
-          dates.add(date);
-        }
-      }
-    }
-
-    List<double> dailyPhysical = [];
-    List<double> dailyTechnical = [];
-    List<double> dailyTotal = [];
-
+    //initialize all dates in all dictionaries
     for (String date in dates) {
-      double physicalDuration;
-      double technicalDuration;
-
-      if (physicalDurations.keys.contains(date)) {
-        physicalDuration = physicalDurations[date];
-      } else {
-        physicalDuration = 0;
-      }
-
-      if (technicalDurations.keys.contains(date)) {
-        technicalDuration = technicalDurations[date];
-      } else {
-        technicalDuration = 0;
-      }
-
-      dailyPhysical.add(physicalDuration);
-      dailyTechnical.add(technicalDuration);
-      dailyTotal.add(physicalDuration + technicalDuration);
+      physicalDurations[date] = 0;
+      technicalDurations[date] = 0;
+      totals[date] = 0;
     }
 
-    double maxValue = dailyTotal.reduce(max);
+    //add distance ran to each date
+    for (String distance in distanceData) {
+      double distanceKm = double.parse(distance.split('-')[0]);
+      String date = distance.split('-')[1];
+      String type = distance.split('-')[2];
+
+      Map outputMap;
+
+      if (type == 'Physical') {
+        outputMap = physicalDurations;
+      } else {
+        outputMap = technicalDurations;
+      }
+
+      outputMap[date] += distanceKm;
+      totals[date] += distanceKm;
+    }
+
+    //convert dictionaries into lists
+    List<double> physicalList = [];
+    List<double> technicalList = [];
+    List<double> totalsList = [];
+
+    physicalDurations.forEach((key, value) => physicalList.add(value));
+    technicalDurations.forEach((key, value) => technicalList.add(value));
+    totals.forEach((key, value) => totalsList.add(value));
+
+    //calculate max value and use it to calculate percentages for y-axis labels
+    double maxValue = totalsList.reduce(max);
 
     //generate axis labels for line graph
     int increments;
 
+    //add y-axis labels
     List<String> yLabels = [];
     if (maxValue / 10 < 1) {
       increments = 1;
@@ -259,6 +286,7 @@ class _StatsPageState extends State<StatsPage> {
       increments = (maxValue / 10).round();
     }
 
+    //calculate y-increments
     maxValue = increments.toDouble() * 10;
     for (int i = increments; i <= maxValue; i += increments) {
       yLabels.add(
@@ -266,6 +294,7 @@ class _StatsPageState extends State<StatsPage> {
       );
     }
 
+    //create list with x labels (starting and ending date)
     List<String> xLabels = [
       dates[0],
     ];
@@ -276,26 +305,26 @@ class _StatsPageState extends State<StatsPage> {
 
     xLabels.add('Today');
 
-    //add data for line chart
+    //add data to feature list as separate sub-plots
     List<Feature> features = [
       Feature(
         title: 'Total',
-        data: convertToPercentages(dailyTotal, maxValue),
+        data: convertToPercentages(totalsList, maxValue),
         color: Colors.purpleAccent,
       ),
       Feature(
-        title: 'Technical Training',
-        data: convertToPercentages(dailyTechnical, maxValue),
+        title: 'Physical',
+        data: convertToPercentages(physicalList, maxValue),
         color: Colors.blue,
       ),
       Feature(
-        title: 'Physical Training',
-        data: convertToPercentages(dailyPhysical, maxValue),
+        title: 'Technical',
+        data: convertToPercentages(technicalList, maxValue),
         color: Colors.cyanAccent,
       ),
     ];
 
-    //build lineGraph
+    //return column with labels and graph with data
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -341,7 +370,7 @@ class _StatsPageState extends State<StatsPage> {
 
   @override
   Widget build(BuildContext context) {
-    getDurations(context);
+    getDistances(context);
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,

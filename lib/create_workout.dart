@@ -6,6 +6,7 @@ import './add_workout_exercise.dart';
 import './request_handler.dart';
 import './swipe_back_detector.dart';
 import './physical_training.dart';
+import './session_preview.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -53,6 +54,11 @@ class _CreateWorkoutState extends State<CreateWorkout> {
               right: 0,
               child: SwipeBackDetector(
                 PhysicalTraining(),
+                callback: () {
+                  AppGlobals.workoutList = [];
+                  AppGlobals.workoutDurations = [];
+                  AppGlobals.workoutName = 'Workout Name';
+                },
                 child: TextInput(
                   workoutNameController,
                   DeviceInfo.deviceWidth(context) * 0.1,
@@ -79,7 +85,17 @@ class _CreateWorkoutState extends State<CreateWorkout> {
               left: 0,
               right: 0,
               child: ElevatedButton(
-                onPressed: () => print(''),
+                onPressed: () {
+                  if (AppGlobals.workoutList.length > 0) {
+                    GlobalFunctions.navigate(
+                      context,
+                      SessionPreview(
+                        AppGlobals.workoutName,
+                        isWorkout: true,
+                      ),
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,
                 ),
@@ -124,35 +140,45 @@ class _CreateWorkoutState extends State<CreateWorkout> {
               right: 0,
               child: ElevatedButton(
                 onPressed: () async {
-                  //get output string
-                  String outputString = '';
-                  outputString += 't2-${AppGlobals.workoutName}:';
+                  if (AppGlobals.workoutList.length > 0 &&
+                      AppGlobals.workoutName.length > 0 &&
+                      AppGlobals.workoutName != 'Workout Name') {
+                    //get output string
+                    String outputString = '';
+                    outputString += 't2-${AppGlobals.workoutName}:';
 
-                  for (int i = 0; i < AppGlobals.workoutList.length; i++) {
-                    String exercise = AppGlobals.workoutList[i];
-                    int duration = AppGlobals.workoutDurations[i];
-                    outputString += '$exercise, $duration;';
+                    for (int i = 0; i < AppGlobals.workoutList.length; i++) {
+                      String exercise = AppGlobals.workoutList[i];
+                      int duration = AppGlobals.workoutDurations[i];
+                      outputString += '$exercise, $duration;';
+                    }
+                    outputString =
+                        outputString.substring(0, outputString.length - 1);
+
+                    //write it to file
+                    Response response = await RequestHandler.sendPost(
+                      {
+                        'username': (await GlobalFunctions.getCredentials())[0],
+                        'password': (await GlobalFunctions.getCredentials())[1],
+                      },
+                      'http://192.168.1.142:8090/create-session',
+                      body: outputString,
+                    );
+
+                    //reset global variables
+                    AppGlobals.workoutList = [];
+                    AppGlobals.workoutDurations = [];
+                    AppGlobals.workoutName = 'Session Name';
+
+                    //navigate to main menu
+                    GlobalFunctions.navigate(context, LandingPage());
+                  } else {
+                    GlobalFunctions.showSnackBar(
+                      context,
+                      'You must enter a session name and at least one exercise',
+                      textColor: Colors.white,
+                    );
                   }
-                  outputString =
-                      outputString.substring(0, outputString.length - 1);
-
-                  //write it to file
-                  Response response = await RequestHandler.sendPost(
-                    {
-                      'username': (await GlobalFunctions.getCredentials())[0],
-                      'password': (await GlobalFunctions.getCredentials())[1],
-                    },
-                    'http://192.168.1.142:8090/create-session',
-                    body: outputString,
-                  );
-
-                  //reset global variables
-                  AppGlobals.workoutList = [];
-                  AppGlobals.workoutDurations = [];
-                  AppGlobals.workoutName = 'Session Name';
-
-                  //navigate to main menu
-                  GlobalFunctions.navigate(context, LandingPage());
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,

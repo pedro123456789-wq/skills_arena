@@ -1,14 +1,18 @@
-import 'package:ultimate_translator/main.dart';
-
+import './main.dart';
 import './create_session.dart';
 import './swipe_back_detector.dart';
+import './create_workout.dart';
 
 import 'package:flutter/material.dart';
 
+//TODO: Add error checking and session preview feature to sprinting session page
+
+
 class SessionPreview extends StatefulWidget {
   final String sessionName;
+  bool isWorkout;
 
-  SessionPreview(this.sessionName);
+  SessionPreview(this.sessionName, {this.isWorkout = false});
 
   @override
   _SessionPreviewState createState() => _SessionPreviewState();
@@ -31,8 +35,13 @@ class _SessionPreviewState extends State<SessionPreview> {
 
   List<Widget> getExercises() {
     List<Widget> exerciseRows = [];
+    List<String> exercisesList;
 
-    for (String exercise in AppGlobals.exercisesList) {
+    (widget.isWorkout)
+        ? exercisesList = AppGlobals.workoutList
+        : exercisesList = AppGlobals.exercisesList;
+
+    for (String exercise in exercisesList) {
       if (!checkboxValues.keys.contains(exercise)) {
         checkboxValues[exercise] = false;
       }
@@ -71,8 +80,6 @@ class _SessionPreviewState extends State<SessionPreview> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.sessionName);
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -83,7 +90,7 @@ class _SessionPreviewState extends State<SessionPreview> {
               left: 0,
               right: 0,
               child: SwipeBackDetector(
-                CreateSession(),
+                (widget.isWorkout) ? CreateWorkout() : CreateSession(),
                 child: Text(
                   (widget.sessionName != '') ? widget.sessionName : 'Session',
                   textAlign: TextAlign.center,
@@ -113,24 +120,55 @@ class _SessionPreviewState extends State<SessionPreview> {
                 right: 0,
                 child: ElevatedButton(
                   onPressed: () {
-                    for (String key in checkboxValues.keys) {
-                      if (checkboxValues[key] == true) {
-                        if (AppGlobals.exercisesList.length > 1) {
-                          setState(
-                                () {
-                              int exerciseIndex =
-                              AppGlobals.exercisesList.indexOf(key);
-                              AppGlobals.exerciseDurations.remove(
-                                  AppGlobals.exerciseDurations[exerciseIndex]);
-                              AppGlobals.exercisesList.remove(key);
-                            },
-                          );
-                        }else{
-                          setState(() {
-                            AppGlobals.exercisesList = [];
-                            AppGlobals.exerciseDurations = [];
-                          });
+                    if (widget.isWorkout) {
+                      if (AppGlobals.workoutList.length > 1) {
+                        for (String key in checkboxValues.keys) {
+                          if (checkboxValues[key] == true) {
+                            setState(
+                              () {
+                                int exerciseIndex =
+                                    AppGlobals.workoutList.indexOf(key);
+                                AppGlobals.workoutDurations.remove(
+                                    AppGlobals.workoutDurations[exerciseIndex]);
+                                AppGlobals.workoutList.remove(key);
+                              },
+                            );
+                          }
                         }
+                      } else {
+                        setState(() {
+                          AppGlobals.workoutList = [];
+                          AppGlobals.workoutDurations = [];
+                          GlobalFunctions.navigate(
+                            context,
+                            CreateWorkout(),
+                          );
+                        });
+                      }
+                    } else {
+                      if (AppGlobals.exercisesList.length > 1) {
+                        for (String key in checkboxValues.keys) {
+                          if (checkboxValues[key] == true) {
+                            setState(
+                              () {
+                                int exerciseIndex =
+                                    AppGlobals.exercisesList.indexOf(key);
+                                AppGlobals.exerciseDurations.remove(AppGlobals
+                                    .exerciseDurations[exerciseIndex]);
+                                AppGlobals.exercisesList.remove(key);
+                              },
+                            );
+                          }
+                        }
+                      } else {
+                        setState(() {
+                          AppGlobals.exercisesList = [];
+                          AppGlobals.exerciseDurations = [];
+                          GlobalFunctions.navigate(
+                            context,
+                            CreateSession(),
+                          );
+                        });
                       }
                     }
                   },

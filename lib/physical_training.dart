@@ -8,7 +8,7 @@ import './long_distance_run_start.dart';
 
 import 'package:flutter/material.dart';
 
-//TODO: add return button to get back to main menu and block default return
+
 
 class PhysicalTraining extends StatelessWidget {
   @override

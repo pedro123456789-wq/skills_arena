@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 
 
-//TODO: Add today time trained everyday
 
 class AddSprintingExercise extends StatefulWidget {
   @override

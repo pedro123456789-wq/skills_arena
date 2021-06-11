@@ -14,7 +14,6 @@ import 'package:http/http.dart';
 
 //t1- is the code for technical session in database
 
-
 class CreateSession extends StatefulWidget {
   @override
   _CreateSessionState createState() => _CreateSessionState();
@@ -54,10 +53,10 @@ class _CreateSessionState extends State<CreateSession> {
               right: 0,
               child: SwipeBackDetector(
                 TechnicalTraining(),
-                callback: (){
+                callback: () {
                   AppGlobals.exercisesList = [];
-                  AppGlobals.sessionName = 'Session Name';
                   AppGlobals.exerciseDurations = [];
+                  AppGlobals.sessionName = 'Session Name';
                 },
                 child: TextInput(
                   sessionNameController,
@@ -122,7 +121,7 @@ class _CreateSessionState extends State<CreateSession> {
                     AddExercise(),
                   );
 
-                  if (sessionNameController.text != ''){
+                  if (sessionNameController.text != '') {
                     AppGlobals.sessionName = sessionNameController.text;
                   }
                 },
@@ -142,44 +141,53 @@ class _CreateSessionState extends State<CreateSession> {
               right: 0,
               child: ElevatedButton(
                 onPressed: () async {
-                  //get output string
-                  String outputString = '';
-                  outputString += 't1-${AppGlobals.sessionName}:';
+                  if (AppGlobals.exercisesList.length > 0 &&
+                      AppGlobals.sessionName.length > 0 &&
+                      AppGlobals.sessionName != 'Session Name') {
 
-                  for (int i = 0; i < AppGlobals.exercisesList.length; i++) {
-                    String exercise = AppGlobals.exercisesList[i];
-                    int duration = AppGlobals.exerciseDurations[i];
-                    outputString += '$exercise, $duration;';
+                    //get output string
+                    String outputString = '';
+                    outputString += 't1-${AppGlobals.sessionName}:';
+
+                    for (int i = 0; i < AppGlobals.exercisesList.length; i++) {
+                      String exercise = AppGlobals.exercisesList[i];
+                      int duration = AppGlobals.exerciseDurations[i];
+                      outputString += '$exercise, $duration;';
+                    }
+
+                    outputString =
+                        outputString.substring(0, outputString.length - 1);
+                    outputString += '\n';
+
+                    //write to database
+                    Response response = await RequestHandler.sendPost(
+                      {
+                        'username': (await GlobalFunctions.getCredentials())[0],
+                        'password': (await GlobalFunctions.getCredentials())[1],
+                      },
+                      'http://192.168.1.142:8090/create-session',
+                      body: outputString,
+                    );
+
+                    //reset global variables
+                    AppGlobals.exercisesList = [];
+                    AppGlobals.exerciseDurations = [];
+                    AppGlobals.sessionName = 'Session Name';
+
+                    //navigate to main menu
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LandingPage(),
+                      ),
+                    );
+                  } else {
+                    GlobalFunctions.showSnackBar(
+                      context,
+                      'You must enter a session name and add at least one exercise',
+                      textColor: Colors.white
+                    );
                   }
-
-                  outputString =
-                      outputString.substring(0, outputString.length - 1);
-                  outputString += '\n';
-
-                  //write to database
-                  Response response = await RequestHandler.sendPost(
-                    {
-                      'username': (await GlobalFunctions.getCredentials())[0],
-                      'password': (await GlobalFunctions.getCredentials())[1],
-                    },
-                    'http://192.168.1.142:8090/create-session',
-                    body: outputString,
-                  );
-
-                  //TODO: Add error checking
-
-                  //reset global variables
-                  AppGlobals.exercisesList = [];
-                  AppGlobals.exerciseDurations = [];
-                  AppGlobals.sessionName = 'Session Name';
-
-                  //navigate to main menu
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LandingPage(),
-                    ),
-                  );
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,

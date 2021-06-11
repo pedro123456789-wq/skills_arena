@@ -31,8 +31,6 @@ class SessionFinished extends StatelessWidget {
       'http://192.168.1.142:8090/add-workout-data',
       body: outputString,
     );
-
-    //TODO: Add error checking
   }
 
   void addDistanceRan() async {

@@ -11,7 +11,6 @@ class AddExercise extends StatefulWidget {
   _AddExerciseState createState() => _AddExerciseState();
 }
 
-
 class _AddExerciseState extends State<AddExercise> {
   final exerciseNameController = TextEditingController();
   int seconds;
@@ -145,30 +144,10 @@ class _AddExerciseState extends State<AddExercise> {
               child: ElevatedButton(
                 onPressed: () {
                   String exerciseName = exerciseNameController.text;
-
-                  if (exerciseName == '' || seconds == null) {
-                    final SnackBar snackBar = SnackBar(
-                      backgroundColor: Colors.white10,
-                      content: Text(
-                        'You must enter an exercise name and duration',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.redAccent,
-                          fontSize: DeviceInfo.deviceWidth(context) * 0.05,
-                        ),
-                      ),
-                    );
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      snackBar,
-                    );
-                  } else {
-                    if (exerciseName != null) {
-                      AppGlobals.exercisesList.add(exerciseName);
-                    } else {
-                      AppGlobals.exercisesList.add('Anonymous Exercise');
-                    }
-
+                  if (exerciseName.length > 0 &&
+                      exerciseName != 'ExerciseName' &&
+                      seconds > 0) {
+                    AppGlobals.exercisesList.add(exerciseName);
                     AppGlobals.exerciseDurations.add(seconds);
 
                     Navigator.push(
@@ -176,6 +155,11 @@ class _AddExerciseState extends State<AddExercise> {
                       MaterialPageRoute(
                         builder: (context) => CreateSession(),
                       ),
+                    );
+                  } else {
+                    GlobalFunctions.showSnackBar(
+                      context,
+                      'You must enter a workout name and duration',
                     );
                   }
                 },

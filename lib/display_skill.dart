@@ -10,7 +10,7 @@ import 'package:http/http.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
-//TODO: Fix Video player to make it display the videos
+
 
 class DisplaySkill extends StatefulWidget {
   final String skillName;

@@ -143,6 +143,7 @@ class GlobalFunctions {
     return LoginPage();
   }
 
+
   static Future<List<String>> getCredentials() async {
     io.File loginFile =
         io.File(await GlobalFunctions.getTempPath('login_file.txt'));
@@ -153,7 +154,27 @@ class GlobalFunctions {
 
     return [username, password];
   }
+
+
+  static void showSnackBar(BuildContext context, String text, {Color textColor = Colors.redAccent, Color backgroundColor = Colors.white10}){
+    final SnackBar snackBar = SnackBar(
+      backgroundColor: backgroundColor,
+      content: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: textColor,
+          fontSize: DeviceInfo.deviceWidth(context) * 0.05,
+        ),
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      snackBar,
+    );
+  }
 }
+
 
 class App extends StatelessWidget {
   @override

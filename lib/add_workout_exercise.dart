@@ -7,7 +7,6 @@ import './create_workout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class AddWorkoutExercise extends StatefulWidget {
   @override
   _AddWorkoutExerciseState createState() => _AddWorkoutExerciseState();
@@ -151,21 +150,26 @@ class _AddWorkoutExerciseState extends State<AddWorkoutExercise> {
                   //get exercise name and duration
                   String exerciseName = workoutExerciseNameController.text;
 
-                  //save exercise name
-                  if (exerciseName != '') {
+                  if (exerciseName.length > 0 &&
+                      exerciseName != 'ExerciseName' &&
+                      seconds != null) {
+                    //save exercise name
                     AppGlobals.workoutList.add(exerciseName);
+
+                    //save exercise duration
+                    AppGlobals.workoutDurations.add(seconds);
+
+                    //navigate back to create_workout page
+                    GlobalFunctions.navigate(
+                      context,
+                      CreateWorkout(),
+                    );
                   } else {
-                    AppGlobals.workoutList.add('Anonymous Exercise');
+                    GlobalFunctions.showSnackBar(
+                      context,
+                      'You must enter a workout name and duration',
+                    );
                   }
-
-                  //save exercise duration
-                  AppGlobals.workoutDurations.add(seconds);
-
-                  //navigate back to create_workout page
-                  GlobalFunctions.navigate(
-                    context,
-                    CreateWorkout(),
-                  );
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,
