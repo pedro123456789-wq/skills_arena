@@ -2,14 +2,12 @@ import './main.dart';
 import './navigation_bar.dart';
 import './add_sprinting_exercise.dart';
 import './add_rest.dart';
-import './session_layout.dart';
+import './session_preview.dart';
 import './session_manager.dart';
 import './swipe_back_detector.dart';
 import './physical_training.dart';
 
 import 'package:flutter/material.dart';
-
-
 
 class SprintingSession extends StatelessWidget {
   List<String> mergeDurations() {
@@ -55,6 +53,10 @@ class SprintingSession extends StatelessWidget {
               right: 0,
               child: SwipeBackDetector(
                 PhysicalTraining(),
+                callback: () {
+                  AppGlobals.sprintDistances = [];
+                  AppGlobals.exerciseDurations = [];
+                },
                 child: Text(
                   'Sprinting Session',
                   textAlign: TextAlign.center,
@@ -86,15 +88,15 @@ class SprintingSession extends StatelessWidget {
               right: 0,
               child: ElevatedButton(
                 onPressed: () {
-                  GlobalFunctions.navigate(
-                    context,
-                    SessionLayout(
-                      sessionName: 'Sprinting Session',
-                      exercises: mergeDurations(),
-                      isWorkout: false,
-                      showStart: false,
-                    ),
-                  );
+                  if (AppGlobals.sprintDistances.length > 0) {
+                    GlobalFunctions.navigate(
+                      context,
+                      SessionPreview(
+                        'Sprinting Session',
+                        'Sprints',
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,
@@ -158,16 +160,25 @@ class SprintingSession extends StatelessWidget {
               right: 0,
               child: ElevatedButton(
                 onPressed: () {
-                  GlobalFunctions.navigate(
-                    context,
-                    SessionManager(
-                      mergeDurations(),
-                      true,
-                      true,
-                    ),
-                  );
-                  AppGlobals.exerciseDurations = [];
-                  AppGlobals.sprintDistances = [];
+                  if (AppGlobals.sprintDistances.length > 0) {
+                    GlobalFunctions.navigate(
+                      context,
+                      SessionManager(
+                        mergeDurations(),
+                        true,
+                        true,
+                      ),
+                    );
+                    AppGlobals.exerciseDurations = [];
+                    AppGlobals.sprintDistances = [];
+                  } else {
+                    GlobalFunctions.showSnackBar(
+                      context,
+                      'You must add at least one sprint exercise',
+                      textColor: Colors.black,
+                      backgroundColor: Colors.redAccent,
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,

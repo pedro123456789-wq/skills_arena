@@ -91,7 +91,7 @@ class _CreateWorkoutState extends State<CreateWorkout> {
                       context,
                       SessionPreview(
                         AppGlobals.workoutName,
-                        isWorkout: true,
+                        'Workout',
                       ),
                     );
                   }
@@ -175,8 +175,9 @@ class _CreateWorkoutState extends State<CreateWorkout> {
                   } else {
                     GlobalFunctions.showSnackBar(
                       context,
-                      'You must enter a session name and at least one exercise',
-                      textColor: Colors.white,
+                      'You must enter a workout name and at least one exercise',
+                      textColor: Colors.black,
+                      backgroundColor: Colors.redAccent,
                     );
                   }
                 },

@@ -88,7 +88,7 @@ class _CreateSessionState extends State<CreateSession> {
                   if (AppGlobals.exercisesList.length > 0) {
                     GlobalFunctions.navigate(
                       context,
-                      SessionPreview(sessionNameController.text),
+                      SessionPreview(sessionNameController.text, 'Session'),
                     );
 
                     if (sessionNameController.text != '') {
@@ -185,7 +185,8 @@ class _CreateSessionState extends State<CreateSession> {
                     GlobalFunctions.showSnackBar(
                       context,
                       'You must enter a session name and add at least one exercise',
-                      textColor: Colors.white
+                      textColor: Colors.black,
+                      backgroundColor: Colors.redAccent
                     );
                   }
                 },

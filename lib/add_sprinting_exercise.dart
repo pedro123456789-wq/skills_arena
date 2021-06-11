@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 
-
-
 class AddSprintingExercise extends StatefulWidget {
   @override
   _AddSprintingExerciseState createState() => _AddSprintingExerciseState();
@@ -116,17 +114,15 @@ class _AddSprintingExerciseState extends State<AddSprintingExercise> {
                                 child: CupertinoTimerPicker(
                                   mode: CupertinoTimerPickerMode.ms,
                                   onTimerDurationChanged: (value) {
-                                    seconds = value.inSeconds;
+                                    setState(() {
+                                      seconds = value.inSeconds;
+                                    });
                                   },
                                 ),
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  setState(
-                                        () {
-                                      Navigator.pop(context);
-                                    },
-                                  );
+                                  Navigator.pop(context);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   primary: Colors.white,
@@ -161,13 +157,13 @@ class _AddSprintingExerciseState extends State<AddSprintingExercise> {
               child: Text(
                 (seconds != null)
                     ? GlobalFunctions.timeString(
-                  seconds ~/ 60,
-                  seconds - ((seconds ~/ 60) * 60),
-                )
+                        seconds ~/ 60,
+                        seconds - ((seconds ~/ 60) * 60),
+                      )
                     : GlobalFunctions.timeString(
-                  null,
-                  null,
-                ),
+                        null,
+                        null,
+                      ),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.grey,
@@ -182,15 +178,20 @@ class _AddSprintingExerciseState extends State<AddSprintingExercise> {
               right: 0,
               child: ElevatedButton(
                 onPressed: () {
-                  AppGlobals.exerciseDurations.add(seconds);
-                  AppGlobals.sprintDistances.add(currentDistance);
+                  if (seconds != null) {
+                    AppGlobals.exerciseDurations.add(seconds);
+                    AppGlobals.sprintDistances.add(currentDistance);
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SprintingSession(),
-                    ),
-                  );
+                    GlobalFunctions.navigate(
+                      context,
+                      SprintingSession(),
+                    );
+                  } else {
+                    GlobalFunctions.showSnackBar(
+                      context,
+                      'You must enter a target time for the sprint',
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,

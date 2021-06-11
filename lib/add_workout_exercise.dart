@@ -81,17 +81,15 @@ class _AddWorkoutExerciseState extends State<AddWorkoutExercise> {
                                 child: CupertinoTimerPicker(
                                   mode: CupertinoTimerPickerMode.ms,
                                   onTimerDurationChanged: (value) {
-                                    seconds = value.inSeconds;
+                                    setState(() {
+                                      seconds = value.inSeconds;
+                                    });
                                   },
                                 ),
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  setState(
-                                    () {
-                                      Navigator.pop(context);
-                                    },
-                                  );
+                                  Navigator.pop(context);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   primary: Colors.white,
@@ -167,7 +165,7 @@ class _AddWorkoutExerciseState extends State<AddWorkoutExercise> {
                   } else {
                     GlobalFunctions.showSnackBar(
                       context,
-                      'You must enter a workout name and duration',
+                      'You must enter an exercise name and duration',
                     );
                   }
                 },
