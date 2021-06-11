@@ -88,7 +88,7 @@ class _CreateSessionState extends State<CreateSession> {
                   if (AppGlobals.exercisesList.length > 0) {
                     GlobalFunctions.navigate(
                       context,
-                      SessionPreview(sessionNameController.text, 'Session'),
+                      SessionPreview(AppGlobals.sessionName, 'Session'),
                     );
 
                     if (sessionNameController.text != '') {

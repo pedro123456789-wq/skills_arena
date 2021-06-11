@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 
-//TODO: Get session name as builder argument and say it when session starts
 
 class SessionManager extends StatefulWidget {
   final List exercises;
   final bool isWorkout;
   final bool isSprint;
+  final String sessionName;
   String sessionType;
   int exercisesIndex = -1;
   String exerciseName = 'Starting In: ';
@@ -19,8 +19,9 @@ class SessionManager extends StatefulWidget {
   SessionManager(
     this.exercises,
     this.isWorkout,
-    this.isSprint,
-  );
+    this.isSprint, {
+    this.sessionName,
+  });
 
   @override
   _SessionManagerState createState() => _SessionManagerState();
@@ -91,7 +92,11 @@ class _SessionManagerState extends State<SessionManager> {
                   String text = '';
 
                   if (widget.exercisesIndex == -1) {
-                    text = 'Starting ${widget.sessionType}';
+                    if (widget.sessionName == null) {
+                      text = 'Starting ${widget.sessionType}';
+                    }else{
+                      text = 'Starting ${widget.sessionName}';
+                    }
                   } else {
                     text =
                         '${widget.exercises[widget.exercisesIndex].split(',')[0]} starting now.';

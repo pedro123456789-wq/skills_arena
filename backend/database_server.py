@@ -476,6 +476,40 @@ def delete_skill():
 
 
 
+@app.route('/delete-session', methods = ['POST'])
+def delete_session():
+	try:
+		headers = flask.request.headers
+		username = headers['username']
+		password = headers['password']
+		session_type = headers['session_type']
+		session_name = headers['session_name']
+	except:
+		return ('Missing required headers', 404, [['Content-Type', 'text/html']])
+
+	if isAuthenticated(username, password):
+		user = User.query.filter_by(username = username).all()[0]
+		workout_data = user.saved_workouts
+
+		data_list = workout_data.splitlines()
+
+		for line in data_list:
+			if line != '':
+				components = line.split('-')
+				current_session_name, current_session_type = components[1].split(':')[0], components[0]
+
+				if (session_name.strip() == current_session_name.strip()) and (session_type.strip() == current_session_type.strip()):
+					data_list.pop(data_list.index(line))
+					user.saved_workouts = '\n'.join(data_list)
+					db.session.commit()
+
+					return ('Deleted saved session', 200, [['Content-Type', 'text/html']])
+		return ('Could not find session in database', 404, [['Content-Type', 'text/html']])
+	else:
+		return ('Invalid credentials', 404, [['Content-Type', 'text/html']])
+
+
+
 if __name__ == '__main__':
 	print('Starting Database Server...')
 	print('Server Running')

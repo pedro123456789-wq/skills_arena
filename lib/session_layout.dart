@@ -97,7 +97,12 @@ class SessionLayout extends StatelessWidget {
                   onPressed: () {
                     GlobalFunctions.navigate(
                       context,
-                      SessionManager(exercises, isWorkout, false),
+                      SessionManager(
+                        exercises,
+                        isWorkout,
+                        false,
+                        sessionName: sessionName,
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(

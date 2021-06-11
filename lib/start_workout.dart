@@ -4,10 +4,15 @@ import './session_layout.dart';
 import './request_handler.dart';
 import './swipe_back_detector.dart';
 import './physical_training.dart';
+import './delete_sessions.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
+
+
+//TODO: Add page to delete workout and session
+
 
 class StartWorkout extends StatefulWidget {
   @override
@@ -51,7 +56,7 @@ class _StartWorkoutState extends State<StartWorkout> {
                   SessionLayout(
                     sessionName: sessionName,
                     exercises: exercises,
-                    isWorkout: false,
+                    isWorkout: true,
                   ),
                 );
               },
@@ -152,6 +157,25 @@ class _StartWorkoutState extends State<StartWorkout> {
                 }
               },
             ),
+            Positioned(
+              top: DeviceInfo.deviceHeight(context) * 0.85,
+              left: 0,
+              right: 0,
+              child: ElevatedButton(
+                onPressed: () {
+                  GlobalFunctions.navigate(
+                    context,
+                    DeleteSessions(true),
+                  );
+                },
+                style: ElevatedButton.styleFrom(primary: Colors.black),
+                child: Icon(
+                  Icons.delete,
+                  color: Colors.redAccent,
+                  size: DeviceInfo.deviceWidth(context) * 0.15,
+                ),
+              ),
+            )
           ],
         ),
       ),
