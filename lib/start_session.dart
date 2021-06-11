@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
-
 class StartSession extends StatefulWidget {
   @override
   _StartSessionState createState() => _StartSessionState();
@@ -21,7 +20,6 @@ class _StartSessionState extends State<StartSession> {
   Future<List<Widget>> getSessionButtons(BuildContext context) async {
     List<Widget> sessions = [];
 
-    print('Getting data');
     Response response = await RequestHandler.sendPost(
       {
         'username': (await GlobalFunctions.getCredentials())[0],
@@ -30,7 +28,6 @@ class _StartSessionState extends State<StartSession> {
       'http://192.168.1.142:8090/get-sessions',
     );
 
-    print('Got data');
     List<String> sessionData = response.body.split('\n');
 
     for (String session in sessionData) {
@@ -71,7 +68,21 @@ class _StartSessionState extends State<StartSession> {
         );
       }
     }
-    return sessions;
+
+    if (sessions.length > 0) {
+      return sessions;
+    } else {
+      return [
+        Text(
+          'You have not saved any sessions yet',
+          style: TextStyle(
+            color: Colors.redAccent,
+            fontSize: DeviceInfo.deviceWidth(context) * 0.8,
+            fontFamily: 'PermanentMarker',
+          ),
+        ),
+      ];
+    }
   }
 
   @override
