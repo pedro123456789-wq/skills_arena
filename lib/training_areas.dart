@@ -94,6 +94,7 @@ class _TrainingAreasState extends State<TrainingAreas> {
                               maxScale: 3,
                               child: Image.file(
                                 snapshot.data,
+                                fit: BoxFit.cover,
                               ),
                             ),
                           ),

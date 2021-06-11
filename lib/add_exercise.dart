@@ -11,9 +11,6 @@ class AddExercise extends StatefulWidget {
   _AddExerciseState createState() => _AddExerciseState();
 }
 
-//TODO: add error message to force user to enter exercise name and duration
-//TODO: add option to delete exercises and see session layout
-//TODO: Make gesture detector work everywhere on pages
 
 class _AddExerciseState extends State<AddExercise> {
   final exerciseNameController = TextEditingController();
@@ -149,20 +146,38 @@ class _AddExerciseState extends State<AddExercise> {
                 onPressed: () {
                   String exerciseName = exerciseNameController.text;
 
-                  if (exerciseName != null) {
-                    AppGlobals.exercisesList.add(exerciseName);
+                  if (exerciseName == '' || seconds == null) {
+                    final SnackBar snackBar = SnackBar(
+                      backgroundColor: Colors.white10,
+                      content: Text(
+                        'You must enter an exercise name and duration',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.redAccent,
+                          fontSize: DeviceInfo.deviceWidth(context) * 0.05,
+                        ),
+                      ),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackBar,
+                    );
                   } else {
-                    AppGlobals.exercisesList.add('Anonymous Exercise');
+                    if (exerciseName != null) {
+                      AppGlobals.exercisesList.add(exerciseName);
+                    } else {
+                      AppGlobals.exercisesList.add('Anonymous Exercise');
+                    }
+
+                    AppGlobals.exerciseDurations.add(seconds);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CreateSession(),
+                      ),
+                    );
                   }
-
-                  AppGlobals.exerciseDurations.add(seconds);
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CreateSession(),
-                    ),
-                  );
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,

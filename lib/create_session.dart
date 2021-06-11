@@ -6,13 +6,14 @@ import './landing_page.dart';
 import './request_handler.dart';
 import './swipe_back_detector.dart';
 import './technical_training.dart';
+import './session_preview.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
 //t1- is the code for technical session in database
-//TODO: add clear session option
+
 
 class CreateSession extends StatefulWidget {
   @override
@@ -53,6 +54,11 @@ class _CreateSessionState extends State<CreateSession> {
               right: 0,
               child: SwipeBackDetector(
                 TechnicalTraining(),
+                callback: (){
+                  AppGlobals.exercisesList = [];
+                  AppGlobals.sessionName = 'Session Name';
+                  AppGlobals.exerciseDurations = [];
+                },
                 child: TextInput(
                   sessionNameController,
                   DeviceInfo.deviceWidth(context) * 0.1,
@@ -79,7 +85,18 @@ class _CreateSessionState extends State<CreateSession> {
               left: 0,
               right: 0,
               child: ElevatedButton(
-                onPressed: () => print(''),
+                onPressed: () {
+                  if (AppGlobals.exercisesList.length > 0) {
+                    GlobalFunctions.navigate(
+                      context,
+                      SessionPreview(sessionNameController.text),
+                    );
+
+                    if (sessionNameController.text != '') {
+                      AppGlobals.sessionName = sessionNameController.text;
+                    }
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.black,
                 ),
@@ -100,13 +117,12 @@ class _CreateSessionState extends State<CreateSession> {
               right: 0,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
+                  GlobalFunctions.navigate(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => AddExercise(),
-                    ),
+                    AddExercise(),
                   );
-                  if (sessionNameController.text != '') {
+
+                  if (sessionNameController.text != ''){
                     AppGlobals.sessionName = sessionNameController.text;
                   }
                 },
