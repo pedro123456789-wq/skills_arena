@@ -143,6 +143,7 @@ class _CreateWorkoutState extends State<CreateWorkout> {
                   if (AppGlobals.workoutList.length > 0 &&
                       AppGlobals.workoutName.length > 0 &&
                       AppGlobals.workoutName != 'Workout Name') {
+
                     //get output string
                     String outputString = '';
                     outputString += 't2-${AppGlobals.workoutName}:';
@@ -152,8 +153,10 @@ class _CreateWorkoutState extends State<CreateWorkout> {
                       int duration = AppGlobals.workoutDurations[i];
                       outputString += '$exercise, $duration;';
                     }
+
                     outputString =
                         outputString.substring(0, outputString.length - 1);
+                    outputString += '\n';
 
                     //write it to file
                     Response response = await RequestHandler.sendPost(

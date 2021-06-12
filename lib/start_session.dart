@@ -10,8 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
-
-
 class StartSession extends StatefulWidget {
   @override
   _StartSessionState createState() => _StartSessionState();
@@ -19,7 +17,7 @@ class StartSession extends StatefulWidget {
 
 class _StartSessionState extends State<StartSession> {
   Future futurePointer;
-  bool isValid = true;
+  bool isValid = false;
 
   Future<List<Widget>> getSessionButtons(BuildContext context) async {
     List<Widget> sessions = [];
@@ -74,9 +72,13 @@ class _StartSessionState extends State<StartSession> {
     }
 
     if (sessions.length > 0) {
+      setState(
+        () {
+          isValid = true;
+        },
+      );
       return sessions;
     } else {
-      //isValid = false;
       return [
         Container(
           padding: EdgeInsets.fromLTRB(

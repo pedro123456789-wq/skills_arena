@@ -144,7 +144,7 @@ class _AddExerciseState extends State<AddExercise> {
                   String exerciseName = exerciseNameController.text;
                   if (exerciseName.length > 0 &&
                       exerciseName != 'ExerciseName' &&
-                      seconds > 0) {
+                      seconds != null) {
                     AppGlobals.exercisesList.add(exerciseName);
                     AppGlobals.exerciseDurations.add(seconds);
 

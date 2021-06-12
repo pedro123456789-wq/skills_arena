@@ -10,9 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
-
 //TODO: Add page to delete workout and session
-
 
 class StartWorkout extends StatefulWidget {
   @override
@@ -21,6 +19,7 @@ class StartWorkout extends StatefulWidget {
 
 class _StartWorkoutState extends State<StartWorkout> {
   Future futurePointer;
+  bool isValid = false;
 
   Future<List<Widget>> getSessionButtons(BuildContext context) async {
     List<Widget> sessions = [];
@@ -75,6 +74,12 @@ class _StartWorkoutState extends State<StartWorkout> {
     }
 
     if (sessions.length > 0) {
+      setState(
+            () {
+          isValid = true;
+        },
+      );
+
       return sessions;
     } else {
       return [
@@ -157,25 +162,26 @@ class _StartWorkoutState extends State<StartWorkout> {
                 }
               },
             ),
-            Positioned(
-              top: DeviceInfo.deviceHeight(context) * 0.85,
-              left: 0,
-              right: 0,
-              child: ElevatedButton(
-                onPressed: () {
-                  GlobalFunctions.navigate(
-                    context,
-                    DeleteSessions(true),
-                  );
-                },
-                style: ElevatedButton.styleFrom(primary: Colors.black),
-                child: Icon(
-                  Icons.delete,
-                  color: Colors.redAccent,
-                  size: DeviceInfo.deviceWidth(context) * 0.15,
+            if (isValid)
+              Positioned(
+                top: DeviceInfo.deviceHeight(context) * 0.7,
+                left: 0,
+                right: 0,
+                child: ElevatedButton(
+                  onPressed: () {
+                    GlobalFunctions.navigate(
+                      context,
+                      DeleteSessions(true),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(primary: Colors.black),
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.redAccent,
+                    size: DeviceInfo.deviceWidth(context) * 0.15,
+                  ),
                 ),
-              ),
-            )
+              )
           ],
         ),
       ),

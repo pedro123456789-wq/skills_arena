@@ -17,6 +17,7 @@ class SessionPreview extends StatefulWidget {
   _SessionPreviewState createState() => _SessionPreviewState();
 }
 
+
 class _SessionPreviewState extends State<SessionPreview> {
   Map<String, bool> checkboxValues = {};
   Widget parentWindow;

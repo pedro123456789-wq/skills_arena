@@ -224,6 +224,26 @@ def get_user_sessions():
 		return ('Invalid credentials', 404, [['Content-Type', 'text/html']])
 
 
+@app.route('/get-session-number', methods = ['POST'])
+def get_session_number():
+	try:
+		headers = flask.request.headers
+		username = headers['username']
+		password = headers['password']
+		session_type = headers['session_type']
+	except:
+		return ('Missing Reqiuired headers', 404, [['Content-Type', 'text/html']])
+
+
+	if isAuthenticated(username, password):
+		user = User.query.filter_by(username = username).all()[0]
+		sessions = [session for session in user.saved_workouts.splitlines() if len(session) > 0 and session.split('-')[0] == session_type]
+
+		return (str(len(sessions)), 200, [['Content-Type', 'text/html']])
+	else:
+		return ('Invalid credentials', 404, [['Content-Type', 'text/html']])
+
+
 @app.route('/get-workout-data', methods = ['POST'])
 def get_workout_data():
 	try:
@@ -500,7 +520,7 @@ def delete_session():
 
 				if (session_name.strip() == current_session_name.strip()) and (session_type.strip() == current_session_type.strip()):
 					data_list.pop(data_list.index(line))
-					user.saved_workouts = '\n'.join(data_list)
+					user.saved_workouts = '\n'.join(data_list) + '\n'
 					db.session.commit()
 
 					return ('Deleted saved session', 200, [['Content-Type', 'text/html']])
