@@ -1,11 +1,11 @@
 {
-    "name": "ultimate_translator",
-    "short_name": "ultimate_translator",
+    "name": "skills_arena",
+    "short_name": "skills_arena",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Translator with AI features",
+    "description": "Football Training App that maximizes training performance",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

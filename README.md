@@ -1,4 +1,4 @@
-# ultimate_translator
+# skills_arena
 
 Translator with AI features
 

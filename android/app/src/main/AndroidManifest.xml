@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ultimate_translator">
+    package="com.skills_arena.name">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
    <application
         android:usesCleartextTraffic="true"
-        android:label="ultimate_translator"
+        android:label="Skills Arena"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

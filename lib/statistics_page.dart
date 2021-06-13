@@ -10,14 +10,52 @@ import 'package:draw_graph/draw_graph.dart';
 import 'package:draw_graph/models/feature.dart';
 import 'dart:math';
 
+
 class StatsPage extends StatefulWidget {
   @override
   _StatsPageState createState() => _StatsPageState();
 }
 
+
 class _StatsPageState extends State<StatsPage> {
   int futureIndex = 0;
   Future currentFuture;
+
+  Widget getErrorWidget(bool isDistance) {
+    String text;
+    (isDistance) ? text = 'Distance Ran (Km)' : text = 'Time trained (minutes)';
+
+    return Column(
+      children: [
+        Text(
+          text,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.greenAccent,
+            fontSize: DeviceInfo.deviceWidth(context) * 0.08,
+            fontFamily: 'PermanentMarker',
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.fromLTRB(
+            0,
+            DeviceInfo.deviceHeight(context) * 0.25,
+            0,
+            0,
+          ),
+          child: Text(
+            'Not enough data \n to show',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.redAccent,
+              fontSize: DeviceInfo.deviceWidth(context) * 0.08,
+              fontFamily: 'PermanentMarker',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   List<double> convertToPercentages(List<double> values, double maxValue) {
     List<double> percentages = [];
@@ -53,153 +91,166 @@ class _StatsPageState extends State<StatsPage> {
     );
 
     String databaseData = databaseResponse.body;
-    List<String> distanceData = databaseData.split('\n');
-    distanceData = distanceData.sublist(1, distanceData.length);
-    String firstDate = distanceData[0].split('-')[1];
 
-    //initialize dictionaries to store distances ran in different dates
-    Map<String, double> longDistances = {};
-    Map<String, double> sprints = {};
-    Map<String, double> totals = {};
+    if (databaseData.length > 0) {
+      List<String> distanceData = databaseData.split('\n');
+      distanceData = distanceData.sublist(1, distanceData.length);
+      String firstDate = distanceData[0].split('-')[1];
 
-    //get all dates between starting and ending date
-    List<String> dates = getDatesInRange(
-      DateTime(
-        int.parse(
-          firstDate.split('/')[2],
+      //initialize dictionaries to store distances ran in different dates
+      Map<String, double> longDistances = {};
+      Map<String, double> sprints = {};
+      Map<String, double> totals = {};
+
+      //get all dates between starting and ending date
+      List<String> dates = getDatesInRange(
+        DateTime(
+          int.parse(
+            firstDate.split('/')[2],
+          ),
+          int.parse(
+            firstDate.split('/')[1],
+          ),
+          int.parse(
+            firstDate.split('/')[0],
+          ),
         ),
-        int.parse(
-          firstDate.split('/')[1],
-        ),
-        int.parse(
-          firstDate.split('/')[0],
-        ),
-      ),
-      DateTime.now(),
-    );
+        DateTime.now(),
+      );
 
-    //initialize all dates in all dictionaries
-    for (String date in dates) {
-      longDistances[date] = 0;
-      sprints[date] = 0;
-      totals[date] = 0;
-    }
-
-    //add distance ran to each date
-    for (String distance in distanceData) {
-      double distanceKm = double.parse(distance.split('-')[0]);
-      String date = distance.split('-')[1];
-      String type = distance.split('-')[2];
-
-      Map outputMap;
-
-      if (type == 'LongDistance') {
-        outputMap = longDistances;
-      } else {
-        outputMap = sprints;
+      if (dates.length < 2) {
+        return getErrorWidget(
+          true,
+        );
       }
 
-      outputMap[date] += distanceKm;
-      totals[date] += distanceKm;
-    }
+      //initialize all dates in all dictionaries
+      for (String date in dates) {
+        longDistances[date] = 0;
+        sprints[date] = 0;
+        totals[date] = 0;
+      }
 
-    //convert dictionaries into lists
-    List<double> longDistancesList = [];
-    List<double> sprintsList = [];
-    List<double> totalsList = [];
+      //add distance ran to each date
+      for (String distance in distanceData) {
+        double distanceKm = double.parse(distance.split('-')[0]);
+        String date = distance.split('-')[1];
+        String type = distance.split('-')[2];
 
-    longDistances.forEach((key, value) => longDistancesList.add(value));
-    sprints.forEach((key, value) => sprintsList.add(value));
-    totals.forEach((key, value) => totalsList.add(value));
+        Map outputMap;
 
-    //calculate max value and use it to calculate percentages for y-axis labels
-    double maxValue = totalsList.reduce(max);
+        if (type == 'LongDistance') {
+          outputMap = longDistances;
+        } else {
+          outputMap = sprints;
+        }
 
-    //generate axis labels for line graph
-    int increments;
+        outputMap[date] += distanceKm;
+        totals[date] += distanceKm;
+      }
 
-    //add y-axis labels
-    List<String> yLabels = [];
-    if (maxValue / 10 < 1) {
-      increments = 1;
-    } else {
-      increments = (maxValue / 10).round();
-    }
+      //convert dictionaries into lists
+      List<double> longDistancesList = [];
+      List<double> sprintsList = [];
+      List<double> totalsList = [];
 
-    //calculate y-increments
-    maxValue = increments.toDouble() * 10;
-    for (int i = increments; i <= maxValue; i += increments) {
-      yLabels.add(
-        i.toString(),
-      );
-    }
+      longDistances.forEach((key, value) => longDistancesList.add(value));
+      sprints.forEach((key, value) => sprintsList.add(value));
+      totals.forEach((key, value) => totalsList.add(value));
 
-    //create list with x labels (starting and ending date)
-    List<String> xLabels = [
-      dates[0],
-    ];
+      //calculate max value and use it to calculate percentages for y-axis labels
+      double maxValue = totalsList.reduce(max);
 
-    for (double i = 1; i < dates.length - 1; i++) {
-      xLabels.add('');
-    }
+      //generate axis labels for line graph
+      int increments;
 
-    xLabels.add('Today');
+      //add y-axis labels
+      List<String> yLabels = [];
+      if (maxValue / 10 < 1) {
+        increments = 1;
+      } else {
+        increments = (maxValue / 10).round();
+      }
 
-    //add data to feature list as separate sub-plots
-    List<Feature> features = [
-      Feature(
-        title: 'Total',
-        data: convertToPercentages(totalsList, maxValue),
-        color: Colors.purpleAccent,
-      ),
-      Feature(
-        title: 'Long Distance',
-        data: convertToPercentages(longDistancesList, maxValue),
-        color: Colors.blue,
-      ),
-      Feature(
-        title: 'Sprints',
-        data: convertToPercentages(sprintsList, maxValue),
-        color: Colors.cyanAccent,
-      ),
-    ];
+      //calculate y-increments
+      maxValue = increments.toDouble() * 10;
+      for (int i = increments; i <= maxValue; i += increments) {
+        yLabels.add(
+          i.toString(),
+        );
+      }
 
-    //return column with labels and graph with data
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          padding: EdgeInsets.fromLTRB(
-            0,
-            0,
-            0,
-            DeviceInfo.deviceHeight(context) * 0.07,
-          ),
-          child: Text(
-            'Distance Ran (Km)',
-            style: TextStyle(
-              color: Colors.greenAccent,
-              fontSize: DeviceInfo.deviceWidth(context) * 0.08,
-              fontFamily: 'PermanentMarker',
+      //create list with x labels (starting and ending date)
+      List<String> xLabels = [
+        dates[0],
+      ];
+
+      for (double i = 1; i < dates.length - 1; i++) {
+        xLabels.add('');
+      }
+
+      xLabels.add('Today');
+
+      //add data to feature list as separate sub-plots
+      List<Feature> features = [
+        Feature(
+          title: 'Total',
+          data: convertToPercentages(totalsList, maxValue),
+          color: Colors.purpleAccent,
+        ),
+        Feature(
+          title: 'Long Distance',
+          data: convertToPercentages(longDistancesList, maxValue),
+          color: Colors.blue,
+        ),
+        Feature(
+          title: 'Sprints',
+          data: convertToPercentages(sprintsList, maxValue),
+          color: Colors.cyanAccent,
+        ),
+      ];
+
+      //return column with labels and graph with data
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.fromLTRB(
+              0,
+              0,
+              0,
+              DeviceInfo.deviceHeight(context) * 0.07,
+            ),
+            child: Text(
+              'Distance Ran (Km)',
+              style: TextStyle(
+                color: Colors.greenAccent,
+                fontSize: DeviceInfo.deviceWidth(context) * 0.08,
+                fontFamily: 'PermanentMarker',
+              ),
             ),
           ),
-        ),
-        LineGraph(
-          features: features,
-          showDescription: true,
-          size: Size(
-            DeviceInfo.deviceWidth(context) * 1,
-            DeviceInfo.deviceHeight(context) * 0.5,
+          LineGraph(
+            features: features,
+            showDescription: true,
+            size: Size(
+              DeviceInfo.deviceWidth(context) * 1,
+              DeviceInfo.deviceHeight(context) * 0.5,
+            ),
+            labelX: xLabels,
+            labelY: yLabels,
+            graphColor: Colors.redAccent,
+            fontFamily: 'PermanentMarker',
+            textColor: Colors.redAccent,
           ),
-          labelX: xLabels,
-          labelY: yLabels,
-          graphColor: Colors.redAccent,
-          fontFamily: 'PermanentMarker',
-          textColor: Colors.redAccent,
-        ),
-      ],
-    );
+        ],
+      );
+    } else {
+      return getErrorWidget(
+        true,
+      );
+    }
   }
 
   Future<Widget> getDurations(BuildContext context) async {
@@ -213,153 +264,165 @@ class _StatsPageState extends State<StatsPage> {
     );
 
     String databaseData = databaseResponse.body;
-    List<String> distanceData = databaseData.split('\n');
-    distanceData = distanceData.sublist(1, distanceData.length);
-    String firstDate = distanceData[0].split('-')[1];
 
-    //initialize dictionaries to store distances ran in different dates
-    Map<String, double> physicalDurations = {};
-    Map<String, double> technicalDurations = {};
-    Map<String, double> totals = {};
 
-    //get all dates between starting and ending date
-    List<String> dates = getDatesInRange(
-      DateTime(
-        int.parse(
-          firstDate.split('/')[2],
+    if (databaseData.length > 0) {
+      List<String> distanceData = databaseData.split('\n');
+      distanceData = distanceData.sublist(1, distanceData.length);
+      String firstDate = distanceData[0].split('-')[1];
+
+      //initialize dictionaries to store distances ran in different dates
+      Map<String, double> physicalDurations = {};
+      Map<String, double> technicalDurations = {};
+      Map<String, double> totals = {};
+
+      //get all dates between starting and ending date
+      List<String> dates = getDatesInRange(
+        DateTime(
+          int.parse(
+            firstDate.split('/')[2],
+          ),
+          int.parse(
+            firstDate.split('/')[1],
+          ),
+          int.parse(
+            firstDate.split('/')[0],
+          ),
         ),
-        int.parse(
-          firstDate.split('/')[1],
-        ),
-        int.parse(
-          firstDate.split('/')[0],
-        ),
-      ),
-      DateTime.now(),
-    );
+        DateTime.now(),
+      );
 
-    //initialize all dates in all dictionaries
-    for (String date in dates) {
-      physicalDurations[date] = 0;
-      technicalDurations[date] = 0;
-      totals[date] = 0;
-    }
-
-    //add distance ran to each date
-    for (String distance in distanceData) {
-      double distanceKm = double.parse(distance.split('-')[0]);
-      String date = distance.split('-')[1];
-      String type = distance.split('-')[2];
-
-      Map outputMap;
-
-      if (type == 'Physical') {
-        outputMap = physicalDurations;
-      } else {
-        outputMap = technicalDurations;
+      if (dates.length < 2) {
+        return getErrorWidget(false);
       }
 
-      outputMap[date] += distanceKm;
-      totals[date] += distanceKm;
-    }
+      //initialize all dates in all dictionaries
+      for (String date in dates) {
+        physicalDurations[date] = 0;
+        technicalDurations[date] = 0;
+        totals[date] = 0;
+      }
 
-    //convert dictionaries into lists
-    List<double> physicalList = [];
-    List<double> technicalList = [];
-    List<double> totalsList = [];
+      //add distance ran to each date
+      for (String distance in distanceData) {
+        double distanceKm = double.parse(distance.split('-')[0]);
+        String date = distance.split('-')[1];
+        String type = distance.split('-')[2];
 
-    physicalDurations.forEach((key, value) => physicalList.add(value));
-    technicalDurations.forEach((key, value) => technicalList.add(value));
-    totals.forEach((key, value) => totalsList.add(value));
+        Map outputMap;
 
-    //calculate max value and use it to calculate percentages for y-axis labels
-    double maxValue = totalsList.reduce(max);
+        if (type == 'Physical') {
+          outputMap = physicalDurations;
+        } else {
+          outputMap = technicalDurations;
+        }
 
-    //generate axis labels for line graph
-    int increments;
+        outputMap[date] += distanceKm;
+        totals[date] += distanceKm;
+      }
 
-    //add y-axis labels
-    List<String> yLabels = [];
-    if (maxValue / 10 < 1) {
-      increments = 1;
-    } else {
-      increments = (maxValue / 10).round();
-    }
+      //convert dictionaries into lists
+      List<double> physicalList = [];
+      List<double> technicalList = [];
+      List<double> totalsList = [];
 
-    //calculate y-increments
-    maxValue = increments.toDouble() * 10;
-    for (int i = increments; i <= maxValue; i += increments) {
-      yLabels.add(
-        i.toString(),
-      );
-    }
+      physicalDurations.forEach((key, value) => physicalList.add(value));
+      technicalDurations.forEach((key, value) => technicalList.add(value));
+      totals.forEach((key, value) => totalsList.add(value));
 
-    //create list with x labels (starting and ending date)
-    List<String> xLabels = [
-      dates[0],
-    ];
+      //calculate max value and use it to calculate percentages for y-axis labels
+      double maxValue = totalsList.reduce(max);
 
-    for (double i = 1; i < dates.length - 1; i++) {
-      xLabels.add('');
-    }
+      //generate axis labels for line graph
+      int increments;
 
-    xLabels.add('Today');
+      //add y-axis labels
+      List<String> yLabels = [];
+      if (maxValue / 10 < 1) {
+        increments = 1;
+      } else {
+        increments = (maxValue / 10).round();
+      }
 
-    //add data to feature list as separate sub-plots
-    List<Feature> features = [
-      Feature(
-        title: 'Total',
-        data: convertToPercentages(totalsList, maxValue),
-        color: Colors.purpleAccent,
-      ),
-      Feature(
-        title: 'Physical',
-        data: convertToPercentages(physicalList, maxValue),
-        color: Colors.blue,
-      ),
-      Feature(
-        title: 'Technical',
-        data: convertToPercentages(technicalList, maxValue),
-        color: Colors.cyanAccent,
-      ),
-    ];
+      //calculate y-increments
+      maxValue = increments.toDouble() * 10;
+      for (int i = increments; i <= maxValue; i += increments) {
+        yLabels.add(
+          i.toString(),
+        );
+      }
 
-    //return column with labels and graph with data
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          padding: EdgeInsets.fromLTRB(
-            0,
-            0,
-            0,
-            DeviceInfo.deviceHeight(context) * 0.07,
-          ),
-          child: Text(
-            'Time Trained (minutes)',
-            style: TextStyle(
-              color: Colors.greenAccent,
-              fontSize: DeviceInfo.deviceWidth(context) * 0.08,
-              fontFamily: 'PermanentMarker',
+      //create list with x labels (starting and ending date)
+      List<String> xLabels = [
+        dates[0],
+      ];
+
+      for (double i = 1; i < dates.length - 1; i++) {
+        xLabels.add('');
+      }
+
+      xLabels.add('Today');
+
+      //add data to feature list as separate sub-plots
+      List<Feature> features = [
+        Feature(
+          title: 'Total',
+          data: convertToPercentages(totalsList, maxValue),
+          color: Colors.purpleAccent,
+        ),
+        Feature(
+          title: 'Physical',
+          data: convertToPercentages(physicalList, maxValue),
+          color: Colors.blue,
+        ),
+        Feature(
+          title: 'Technical',
+          data: convertToPercentages(technicalList, maxValue),
+          color: Colors.cyanAccent,
+        ),
+      ];
+
+      //return column with labels and graph with data
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.fromLTRB(
+              0,
+              0,
+              0,
+              DeviceInfo.deviceHeight(context) * 0.07,
+            ),
+            child: Text(
+              'Time Trained (minutes)',
+              style: TextStyle(
+                color: Colors.greenAccent,
+                fontSize: DeviceInfo.deviceWidth(context) * 0.08,
+                fontFamily: 'PermanentMarker',
+              ),
             ),
           ),
-        ),
-        LineGraph(
-          features: features,
-          showDescription: true,
-          size: Size(
-            DeviceInfo.deviceWidth(context) * 1,
-            DeviceInfo.deviceHeight(context) * 0.5,
+          LineGraph(
+            features: features,
+            showDescription: true,
+            size: Size(
+              DeviceInfo.deviceWidth(context) * 1,
+              DeviceInfo.deviceHeight(context) * 0.5,
+            ),
+            labelX: xLabels,
+            labelY: yLabels,
+            graphColor: Colors.redAccent,
+            fontFamily: 'PermanentMarker',
+            textColor: Colors.redAccent,
           ),
-          labelX: xLabels,
-          labelY: yLabels,
-          graphColor: Colors.redAccent,
-          fontFamily: 'PermanentMarker',
-          textColor: Colors.redAccent,
-        ),
-      ],
-    );
+        ],
+      );
+    } else {
+      return getErrorWidget(
+        false,
+      );
+    }
   }
 
   @override

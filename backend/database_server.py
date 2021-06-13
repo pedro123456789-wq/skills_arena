@@ -9,7 +9,6 @@ from random import randint
 
 
 #clean and comment code
-#implement user access levels
 app = flask.Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user_stats.db'
 db = SQLAlchemy(app)
@@ -80,7 +79,7 @@ def see_data():
 		username = headers['username']
 		password = headers['password']
 	except:
-		return ('Missing ID Header', 404, [['Content-Type', 'text/html']])
+		return ('Missing required headers', 404, [['Content-Type', 'text/html']])
 
 	if isAuthenticated(username, password):
 		if is_admin(username):
@@ -93,6 +92,7 @@ def see_data():
 
 			return '\n'.join(list(map(str, users)))
 
+
 	return ('Invalid API Call', 404, [['Content-Type', 'text/html']])
 
 
@@ -104,7 +104,7 @@ def create_user():
 		password = headers['password']
 		email = headers['email']
 	except Exception as e:
-		return (f'Missing Required Headers. \n Error: {e}', 404, [['Content-Type', 'text/html']])
+		return (f'Missing required headers. \n Error: {e}', 404, [['Content-Type', 'text/html']])
 
 
 	if len(User.query.filter_by(username=username).all()) == 0 and len(User.query.filter_by(email = email).all()) == 0:
@@ -125,9 +125,20 @@ def create_user():
 			return ('The chosen email is taken', 404, [['Content-Type', 'text/html']])
 
 
-@app.route('/view-database', methods = ['GET'])
+@app.route('/view-database', methods = ['POST'])
 def view_database():
-	return '\n'.join(list(map(str, User.query.all())))
+	try:
+		headers = flask.request.headers
+		username = headers['username']
+		password = headers['password']
+	except:
+		return ('Missing required headers', 404, [['Content-Type', 'text/html']])
+
+	if isAuthenticated(username, password):
+		if is_admin(username):
+			return ('\n'.join(list(map(str, User.query.all()))), 200, [['Content-Type', 'text/html']])
+
+	return ('Invalid API call', 404, [['Content-Type', 'text/html']])
 
 
 @app.route('/delete-user', methods=['POST'])
@@ -135,14 +146,18 @@ def delete_user():
 	try:
 		headers = flask.request.headers
 		username = headers['username']
-		email = headers['email']
+		password = headers['password']
+		deletion_username = headers['deletion_username']
 	except:
 		return ('Missing Required Headers', 404, [['Content-Type', 'text/html']])
 
-	selected_user = User.query.filter_by(username = username, email = email).delete()
-	db.session.commit()
+	if isAuthenticated(username, password):
+		if is_admin(username):
+			selected_user = User.query.filter_by(username = deletion_username).delete()
+			db.session.commit()
 
-	return ('User deleted', 200, [['Content-Type', 'text/html']])
+			return ('User deleted', 200, [['Content-Type', 'text/html']])
+	return ('Invalid API call', 404, [['Content-Type', 'text/html']])
 
 
 @app.route('/verify-user', methods = ['POST'])

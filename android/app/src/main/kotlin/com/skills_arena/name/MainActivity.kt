@@ -1,4 +1,4 @@
-package com.example.ultimate_translator
+package com.skills_arena.name
 
 import io.flutter.embedding.android.FlutterActivity
 

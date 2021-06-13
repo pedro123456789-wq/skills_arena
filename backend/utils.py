@@ -10,7 +10,10 @@ class utils:
 		server.login("pl156176@gmail.com", "messimagician10")
 		msg = f"Subject: {subj}\n\n{body}"
 		server.sendmail(
-		    "pl156176@gmail.com",
-		    dest,
+			"pl156176@gmail.com",
+			dest,
 		    msg)
 		server.quit()
+
+
+

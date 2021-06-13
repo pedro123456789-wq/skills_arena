@@ -1,11 +1,10 @@
-import 'package:ultimate_translator/physical_training.dart';
-
 import './main.dart';
 import './start_session.dart';
 import './swipe_back_detector.dart';
 import './start_workout.dart';
 import './request_handler.dart';
 import './technical_training.dart';
+import './physical_training.dart';
 
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
