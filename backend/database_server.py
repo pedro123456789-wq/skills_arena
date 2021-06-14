@@ -141,7 +141,7 @@ def view_database():
 	return ('Invalid API call', 404, [['Content-Type', 'text/html']])
 
 
-@app.route('/delete-user', methods=['POST'])
+@app.route('/delete-user-admin', methods=['POST'])
 def delete_user():
 	try:
 		headers = flask.request.headers
@@ -542,6 +542,50 @@ def delete_session():
 		return ('Could not find session in database', 404, [['Content-Type', 'text/html']])
 	else:
 		return ('Invalid credentials', 404, [['Content-Type', 'text/html']])
+
+
+@app.route('/self-delete-account', methods = ['POST'])
+def self_delete_account():
+	try:
+		headers = flask.request.headers
+		username = headers['username']
+		password = headers['password']
+	except:
+		return ('Missing required headers', 404, [['Content-Type', 'text/html']])
+
+	if isAuthenticated(username, password):
+		user = User.query.filter_by(username = username).all()[0]
+		db.session.delete(user)
+		db.session.commit()
+
+		return ('Successfully deleted user account', 200, [['Content-Type', 'text/html']])
+	else:
+		return ('Invalid credentials', 404, [['Content-Type', 'text/html']])
+
+
+@app.route('/change-password', methods = ['POST'])
+def change_password():
+	try:
+		headers = flask.request.headers
+		username = headers['username']
+		password = headers['password']
+		new_password = headers['new_password']
+	except:
+		return ('Missing required headers', 404, [['Content-Type', 'text/html']])
+
+	if isAuthenticated(username, password):
+		user = User.query.filter_by(username = username).all()[0]
+		password_hash = user.password
+
+		if not password_handler.check_password_hash(password_hash, new_password):
+			user.password = password_handler.generate_password_hash(new_password)
+			db.session.commit()
+
+			return ('Successfully changed password', 200, [['Content-Type', 'text/html']])
+		else:
+			return ('The new password is the same as the old password', 404, [['Content-Type', 'text/html']])
+	else:
+		return ('Invalid Credentials', 404, [['Content-Type', 'text/html']])
 
 
 

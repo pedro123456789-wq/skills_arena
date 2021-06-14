@@ -3,6 +3,7 @@ import './navigation_bar.dart';
 import './image_button.dart';
 import './technical_training.dart';
 import './physical_training.dart';
+import './user_profile.dart';
 
 import 'package:flutter/material.dart';
 
@@ -24,14 +25,37 @@ class _LandingPageState extends State<LandingPage> {
               top: DeviceInfo.deviceHeight(context) * 0.01,
               left: 0,
               right: 0,
-              child: Text(
-                'Skills Arena',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.greenAccent,
-                  fontSize: DeviceInfo.deviceWidth(context) * 0.12,
-                  fontFamily: 'PermanentMarker',
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Skills Arena',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.greenAccent,
+                      fontSize: DeviceInfo.deviceWidth(context) * 0.12,
+                      fontFamily: 'PermanentMarker',
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      GlobalFunctions.navigate(
+                        context,
+                        UserProfile(
+                          (await GlobalFunctions.getCredentials())[0],
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.black,
+                    ),
+                    child: Icon(
+                      Icons.account_circle,
+                      color: Colors.redAccent,
+                      size: DeviceInfo.deviceWidth(context) * 0.12,
+                    ),
+                  ),
+                ],
               ),
             ),
             Positioned(
@@ -53,7 +77,7 @@ class _LandingPageState extends State<LandingPage> {
               left: 0,
               right: 0,
               child: ImageButton(
-                () {
+                    () {
                   GlobalFunctions.navigate(
                     context,
                     TechnicalTraining(),
@@ -71,7 +95,7 @@ class _LandingPageState extends State<LandingPage> {
               left: 0,
               right: 0,
               child: ImageButton(
-                () {
+                    () {
                   GlobalFunctions.navigate(context, PhysicalTraining());
                 },
                 'assets/physical_training.png',
