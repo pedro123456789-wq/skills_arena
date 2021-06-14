@@ -113,7 +113,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                           );
 
                           loginFile.writeAsString(
-                            '$username $password1',
+                            '$username, $password1',
                           );
 
                           //navigate to account settings again
