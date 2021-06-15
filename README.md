@@ -1,7 +1,6 @@
 # Skills Arena
 
-Train without limits
+![Alt text](/backend/logo/logo.png?raw=true "Title")
 
-## Description
+## Train without limits
 
-![Alt text](C:/Users/pl156/Documents/flutter/skills_arena/backend/logo/logo.png?raw=true "Title")
