@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
-//TODO: Add page to delete workout and session
 
 class StartWorkout extends StatefulWidget {
   @override

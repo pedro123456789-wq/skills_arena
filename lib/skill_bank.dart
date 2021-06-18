@@ -10,8 +10,6 @@ import './technical_training.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
-
-
 class SkillBank extends StatelessWidget {
   Future<List<Widget>> getSkills(BuildContext context) async {
     List<Widget> skillRows = [];
@@ -25,6 +23,25 @@ class SkillBank extends StatelessWidget {
     );
 
     List<String> skillNames = skills.body.split(',');
+
+    if (skillNames[0] == 'The user has not saved any skills') {
+      return [
+        Container(
+          padding: EdgeInsets.only(
+            top: DeviceInfo.deviceHeight(context) * 0.05,
+          ),
+          child: Text(
+            'You have not saved any skills',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.redAccent,
+              fontSize: DeviceInfo.deviceWidth(context) * 0.08,
+              fontFamily: 'PermanentMarker',
+            ),
+          ),
+        ),
+      ];
+    }
 
     for (String skillName in skillNames) {
       skillRows.add(
