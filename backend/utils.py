@@ -7,7 +7,7 @@ class utils:
 		server.ehlo()
 		server.starttls()
 		server.ehlo()
-		server.login("pl156176@gmail.com", "messimagician10")
+		server.login("pl156176@gmail.com", PASSWORD)
 		msg = f"Subject: {subj}\n\n{body}"
 		server.sendmail(
 			"pl156176@gmail.com",
